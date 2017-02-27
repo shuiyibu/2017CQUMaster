@@ -86,15 +86,69 @@
 
 $$p(x) = \sum_{k=1}^Kp(k)p(x|k)$$
 
-![\displaystyle\begin{aligned}p(x) & = \sum_{k=1}^K p(k)p(x|k) \\     & = \sum_{k=1}^K \pi_k \mathcal{N}(x|\mu_k, \Sigma_k)\end{aligned}](http://blog.pluskid.org/latexrender/pictures/8d0bffdb2f15ae249a74167aa0007bff.png)
-
-其中K为模型的个数，πk为第k个高斯的权重，则为第k个高斯的概率密度函数，其均值为μk，方差为σk。我们对此概率密度的估计就是要求πk、μk和σk各个变量。当求出的表达式后，求和式的各项的结果就分别代表样本x属于各个类的概率。
+$$=\sum_{k=1}^K N(x|\mu_k, \sigma_k)$$
 
 
 
- 
 
- 
+
+其中 $K$ 为模型的个数，$\pi_k$为第k个高斯的权重，则为第 $k$ 个高斯的概率密度函数，其均值为$\mu_k$，方差为 $\sigma_k$。我们对此概率密度的估计就是要求$\pi_k$、$\mu_k$和$\sigma_k$各个变量。当求出的表达式后，求和式的各项的结果就分别代表样本x属于各个类的概率。高斯混合模型的优点是投影后的样本点将获得每个类的概率，而非一个确切的分类标签。相对于 k-means 算法，高斯混合模型每一次的迭代计算量均较大。由于高斯混合模型的聚类方法来源于 EM 算法，因此可能会产生局部极值，这与出事参数选取密切相关。高斯混合模型不仅可以用于聚类分析，同样也可用于概率密度估计。
+
+
+
+（4）基于密度的聚类
+
+​	基于密度的聚类分析算法的主要目是搜寻被低密度区域分割的高密度区域。不同于基于距离的聚类算法（基于距离的聚类算法是以球状簇为前提进行聚类的），基于密度的聚类算法可以发现任意形状的簇，这有利于处理带有噪声点的数据。分布在稀疏区域的对象通常被认为是噪声或边界点。
+
+​	目前，最流行的基于密度的聚类算法是 DBSCAN（Density-Based Spatial Clustering of Application with Noise）[6]。在DBSCAN算法中数据点分为以下三类：
+
+- 核心点。在 $\varepsilon$-邻域内含有超过MinPts数目的点；
+- 边界点。在 $\varepsilon$-邻域内点的数量小于MinPts，但是落在核心点的邻域内
+- 噪音点。既不是核心点也不是边界点的点
+
+其中，$\varepsilon$ 为邻域半径，MinPts 为指定的数目。DBSCAN 的算法思想十分简单：若一个点 p 的 $\varepsilon$-邻域包含多于 MinPts 个对象，那么创建 p 作为核心对象的新簇；搜寻与核心对象直接密度可达的对象，将其合并；若没有新的点可以更新簇时，算法结束。
+
+​	OPTICS [12]是 DBSCAN 的泛化，它并不需要为范围参数 $\varepsilon$ 选择合适的值，并产生与分层聚类相关的分层效果。Density-Link-Clustering 结合单连通聚类和OPTICS 的思想，完全消除了 $\varepsilon$ 参数，并且通过使用 R树索引增强了聚类性能。DBSCAN 和 OPTICS 的主要缺点是它们是通过某种程度的密度下降来检测簇边界的。 此外，它们无法检测现实生活数据中普遍存在的内在簇结构。而 DBSCAN 的变形方法 EnDBSCAN 可以解决此类问题[8]。Mean-shift[9]  方法基于核密度估计[10]，将每个对象移动到其附近最密集的区域。最终，对象会收敛到密度的局部最大值。由于昂贵的迭代过程和密度估计，Mean-shift 通常比 DBSCAN 的效率要低。
+
+​	近年来，诸多学者投身于提高现有算法性能的研究中[11],[12]，其中包括CLARANS （Ng和Han，1994）[13]，[17]和BIRCH（Zhang等，1996）[14]。随着处理越来越大的数据集的需求日益增长，这导致了通过换取性能以增加所产生簇的语义分析能力的意愿越来越强烈。这引起了 pre-clustering 的发展，以 canopy 聚类最具代表性[15]。它可以处理超大型的数据集，但是所得到的“聚类”仅仅是对数据集的粗略预分割，之后会使用现有的聚类分析方法对这些数据集进行聚类。学者们一直在进行各种各样的聚类算法尝试，比如基于 seed 的聚类方法[16]。
+
+
+
+
+
+
+
+## 1.3 本文研究的主要内容
+
+## 1.4 论文的章节排版
+
+# 2 聚类分析概述
+
+## 2.1 聚类分析的定义
+
+
+
+## 2.2 常用的聚类分析算法
+
+## 2.3 聚类分析的评价标准
+
+## 2.4 聚类分析的评估检验
+
+### 2.4.1 内部检验
+
+### 2.4.2 外部检验
+
+# 3 
+
+# 4 基于 PCA-Hubness 的聚类方法
+
+# 5 总结与展望
+
+## 5.1 总结
+
+## 5.2 展望
+
+# 致谢 
 
 # 参考文献： 
 
@@ -107,6 +161,28 @@ $$p(x) = \sum_{k=1}^Kp(k)p(x|k)$$
 [d4] Estivill-Castro, Vladimir (20 June 2002). "Why so many clustering algorithms — A Position Paper". ACM SIGKDD Explorations Newsletter. 4 (1): 65–75. 
 
  [d5] Lloyd, S. (1982). "Least squares quantization in PCM". IEEE Transactions on Information Theory. 28 (2): 129–137.
+
+[d6]  Ester, Martin; Kriegel, Hans-Peter; Sander, Jörg; Xu, Xiaowei (1996). "A density-based algorithm for discovering clusters in large spatial databases with noise". In Simoudis, Evangelos; Han, Jiawei; Fayyad, Usama M. Proceedings of the Second International Conference on Knowledge Discovery and Data Mining (KDD-96). AAAI Press. pp. 226–231.
+
+[d7]  Ankerst, Mihael; Breunig, Markus M.; Kriegel, Hans-Peter; Sander, Jörg (1999). "OPTICS: Ordering Points To Identify the Clustering Structure". ACM SIGMOD international conference on Management of data. ACM Press. pp. 49–60.
+
+[d8] Roy, S.; Bhattacharyya, D. K. (2005). "An Approach to find Embedded Clusters Using Density Based Techniques". LNCS Vol.3816.
+
+[d9] Cheng, Yizong (August 1995). "Mean Shift, Mode Seeking, and Clustering". IEEE Transactions on Pattern Analysis and Machine Intelligence. IEEE. 17 (8): 790–799.
+
+[d10] Xu, X.; Yan, Z.; Xu, S. (2015). "Estimating wind speed probability distribution by diffusion-based kernel density method". Electric Power Systems Research. 121: 28–37.
+
+[d11] Sculley, D. (2010). Web-scale k-means clustering. Proc. 19th WWW.
+
+[d12] ]Huang, Z. (1998). "Extensions to the k-means algorithm for clustering large data sets with categorical values". Data Mining and Knowledge Discovery. 2: 283–304.
+
+[d13] R. Ng and J. Han. "Efficient and effective clustering method for spatial data mining". In: Proceedings of the 20th VLDB Conference, pages 144-155, Santiago, Chile, 1994.
+
+[d14] Tian Zhang, Raghu Ramakrishnan, Miron Livny. "An Efficient Data Clustering Method for Very Large Databases." In: Proc. Int'l Conf. on Management of Data, ACM SIGMOD, pp. 103–114.
+
+[d15]  McCallum, A.; Nigam, K.; and Ungar L.H. (2000) "Efficient Clustering of High Dimensional Data Sets with Application to Reference Matching", Proceedings of the sixth ACM SIGKDD international conference on Knowledge discovery and data mining, 169-178
+
+[d16] Can, F.; Ozkarahan, E. A. (1990). "Concepts and effectiveness of the cover-coefficient-based clustering methodology for text databases". ACM Transactions on Database Systems. 15 (4): 483–517. 
 
 
 
@@ -130,7 +206,11 @@ $$p(x) = \sum_{k=1}^Kp(k)p(x|k)$$
 
  
 
- 
+#  附录
+
+## 作者在攻读学位期间发表的论文目录：
+
+
 
  
 
