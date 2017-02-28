@@ -132,13 +132,83 @@ $$=\sum_{k=1}^K N(x|\mu_k, \sigma_k)$$
 
 ## 2.3 聚类分析的评价标准
 
+
+
 ## 2.4 聚类分析的评估检验
+
+​	聚类结果的评估也被称为聚类验证。两个簇之间的相似性有诸多的检测方法。这些方法可以衡量不同的聚类方法对同一数据集的聚类效果。
 
 ### 2.4.1 内部检验
 
+​	内部评估是指聚类结果的评估依赖于聚类的本身数据。当聚类结果表现出高的类内相似性和低的类间相似性时，这些评估方法会给出一个较高的分值。然而，具有高分值的内部评估却并不一定能够进行有效地信息检索[17]。另外，内部评估易于偏向使用相同聚类模型的算法。比如，基于最优化对象间距离的 k-means 算法，同样基于距离的内部评估将可能高估得到的聚类结果。因此，内部评估方法适用于比较两种算法的性能优劣，然而这却不包含有效性结果（valid results）的比较[4]。有效性指标依赖于数据集本身的结构。比如，k-means 算法只能找到凸簇，所以许多评估指标都是以此为假设的。同样，在具有非凸簇的数据集上，既不使用 k-means 算法，也不采用假定凸簇的评估标准。以下是基于内部标准的评估方法：
+
+（1）Davies–Bouldin 指数
+
+​	Davies-Bouldin 指数计算公式如下：
+
+​							$$DB = \frac{1}{n} \sum_{i=1}^n max_{j \neq i}(\frac{\sigma_i + \sigma_j}{d(c_i, c_j)})$$
+
+其中，$n$ 为簇的个数，$c_x$ 是簇 $x$ 的质心，$\sigma_x$ 是簇 $x$ 中所有元素到簇质心 $ c_x$的距离的平均值，$d(c_i, c_j)$ 是簇 $c_i$ 和簇 $c_j$ 之间的距离。因此，具有越低的 Davies–Bouldin 指数值则表明聚类的结果越好。
+
+
+
+（2）Dunn 指数
+
+​	Dunn 指数的目标是识别具有高密度且良好分割的簇群。它是最小化簇间距离与最大化簇内距离的比值。Dunn 指数的计算公式如下：
+
+​		$$D = \frac{min_{1 \le  i \le j \le n} d(i, j)}{max_{1 \le k \le n} d'(k)}$$
+
+其中，$d(i, j)$ 表示簇 $i$ 和簇 $j$ 之间的距离，$d'(k)$ 为簇 $k$ 的内距离。簇间距 $d(i, j)$ 可以任意选择一种度量方式，比如，假定两个簇的质心之间的距离为两个簇之间的距离。同样，簇内距 $d'(k)$ 也有多重表示方式，比如，假定簇内的任意点对之间的最大距离为簇的簇内距。因此，具有越高的 Dunn 指数值则表明聚类的结果越好。
+
+（3）轮廓系数
+
+​	轮廓系数是簇内点对之间的平均距离与该簇内的点到其它簇的距离的最大值的比值， 其计算公式如下所示：
+
+​									$$S_i=\frac{(b_i-a_i)}{max(a_i,b_i)}$$
+
+其中，$a_i$ 表示 $i$ 向量到同一簇内其他点不相似程度的平均值，$b_i$ 表示 $i$ 向量到其他簇的平均不相似程度的最小值。可见轮廓系数的值总是介于 [-1,1] ，越趋近于1代表内聚度和分离度都相对较优。将所有点的轮廓系数求平均，就是该聚类结果总的轮廓系数。轮廓系数适用于 k-means 算法，也可用于确定最优的聚类数。
+
+
+
 ### 2.4.2 外部检验
 
-# 3 
+​	在外部检验中，聚类结果的评估依赖于未进行聚类的数据，例如已知的类标签和外部基准（external benchmark）。这些基准通常是由该方面的专家设置的一组预分类的元素。因此，这些基准集通常被视为是检验的黄金标准。这些检验方法用于比较聚类结果与预定基准类之间的近似程度。 由于类可能包含内部结构、属性不允许分离簇以及类可能包含异常情况等等，这些因素导致研究人员对基准集是否能够对真实数据进行有效检验产生了疑问[18]。
+
+​	这些方法与评估分类问题的方法相似。不同于统计被正确标记的类，这些方法统计的是同一个簇内点对之间相同标签的个数。以下是基于外部标准的评估方法：
+
+（1）纯度
+
+​	纯度用于衡量每个簇中包含单一类的个数[19]，换言之，纯度是用于统计当前簇中最常见的类的点的个数。将所有簇的纯度累加并除以数据集的样本数就是该数据集的纯度。纯度的计算公式如下：
+
+​				$$\frac{1}N \sum_{m \in M} max_{d \in D}|m \cup d|$$
+
+其中，M 为簇集，D 为类标签集，N 为数据集的样本数。
+
+（2）Rand 指数
+
+​	Rand 用于衡量聚类簇与基准分类信息的相似度[20]，也可视为该算法所作出的正确决策的百分比，其计算公式突下：
+
+​			$$RI = \frac{TP + TN}{TP+TN+FP+FN}$$
+
+其中，TP 为同一个类的点被分到同一个簇的数量，TN 为不同类的点被分到不同簇的数量，FP 为不同类的点被分到同一个簇的数量，FN 为同一类的点被分到不同簇的数量。Rand 指数存在的一个问题是FP 和 FN 具有相同的权重。这对于某些聚类算法而言可能是不期望的特性，下面的 F-measure会解决这个问题。
+
+（3）F-measure
+
+F-measure 通过参数 $\beta$ 来对召回度进行加权从而平衡 FN 的分布[21]，精度和召回度的计算公式如下：
+
+$$P = \frac{TP}{TP+FP}$$
+
+$$R = \frac{TP}{TP+FN}$$
+
+其中 $P$ 是精度，$R$ 是召回度。结合精度和召回度，F-measure 的计算公式如下：
+
+$$F_{\beta} = \frac{(\beta^2 +1 ) \cdot P \cdot R}{\beta^2 \cdot P+R}$$
+
+其中，$\beta = 0$ 时，$F_0 = P$。换言之，当 $\beta = 0$ 时，召回度对 F-measure 无影响。随着 $\beta$  的增加，召回度在 F-measure 的权重也在增加。
+
+# 3 hub 
+
+
 
 # 4 基于 PCA-Hubness 的聚类方法
 
@@ -183,6 +253,20 @@ $$=\sum_{k=1}^K N(x|\mu_k, \sigma_k)$$
 [d15]  McCallum, A.; Nigam, K.; and Ungar L.H. (2000) "Efficient Clustering of High Dimensional Data Sets with Application to Reference Matching", Proceedings of the sixth ACM SIGKDD international conference on Knowledge discovery and data mining, 169-178
 
 [d16] Can, F.; Ozkarahan, E. A. (1990). "Concepts and effectiveness of the cover-coefficient-based clustering methodology for text databases". ACM Transactions on Database Systems. 15 (4): 483–517. 
+
+[d17] Manning, Christopher D.; Raghavan, Prabhakar; Schütze, Hinrich. Introduction to Information Retrieval. Cambridge University Press. ISBN 978-0-521-86571-5.
+
+[d18] Färber, Ines; Günnemann, Stephan; Kriegel, Hans-Peter; Kröger, Peer; Müller, Emmanuel; Schubert, Erich; Seidl, Thomas; Zimek, Arthur (2010). "On Using Class-Labels in Evaluation of Clusterings" (PDF). In Fern, Xiaoli Z.; Davidson, Ian; Dy, Jennifer. MultiClust: Discovering, Summarizing, and Using Multiple Clusterings. ACM SIGKDD.
+
+[d19] Manning, Christopher D.; Raghavan, Prabhakar; Schütze, Hinrich. Introduction to Information Retrieval. Cambridge University Press. ISBN 978-0-521-86571-5.
+
+[d20] Rand, W. M. (1971). "Objective criteria for the evaluation of clustering methods". Journal of the American Statistical Association. American Statistical Association. 66 (336): 846–850.
+
+[d21]  Powers, David M W (2011). "Evaluation: From Precision, Recall and F-Measure to ROC, Informedness, Markedness & Correlation" (PDF). Journal of Machine Learning Technologies. 2 (1): 37–63.
+
+
+
+
 
 
 
