@@ -2,6 +2,7 @@
 
 >- 关于 hubness 自适应的问题
 >  - 是否可用谱分析替代 PCA（通过谱分析，找相邻特征值 gap 较大的地方——这个方法我只了解个大概，而且我觉得“较大”这样的词也让它变得不能自动化了。）
+>- 观测迭代过程中轮廓系数是否逐渐稳定
 
 # 大_面向高维数据的PCA-Hubness聚类方法
 
@@ -216,7 +217,7 @@ $$F_{\beta} = \frac{(\beta^2 +1 ) \cdot P \cdot R}{\beta^2 \cdot P+R}$$
 
 
 
-# Hubness 现象
+## Hubness 现象
 
 令 $D ⊂ R^d，d\in\{1,2,…\}$ 表示一组数据点，其中 $x_1,x_2,…x_n$ 为数据集 $D$ 的元素。令 $dist$ 表示在 $R^d$ 空间中的一个距离函数 $p_{i,k}$，其中 $i, k \in \{1,2,…,n\}$ 如下定义：
 
@@ -254,7 +255,7 @@ $$\rho = \frac{\sum_i(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_i(x_i-\bar{x})^2
 
 
 
-# Hubs 的位置
+## Hubs 的位置
 
 ​	以样本数据分布的均值作为参考点，可以看到 *k-occurrences* 的值与样本的位置的关系。 在高维空间中，当潜在的数据分布是单峰时，hubs 会接近样本的均值；当潜在的数据分布为多峰时（若干个单峰分布混合而成），hubs 趋向于接近最近的单峰分布的均值。
 
@@ -332,13 +333,173 @@ PCA算法步骤：
 
 
 
-# 聚类
+## 聚类
 
-​	基于距离的聚类算法的主要目标是最小化同一个簇内对象之间的距离同时最大化簇间对象之间的距离。在高维数据空间中，*k-occurrences* 的偏度将会对上述两个对象造成影响。具有低 *k-occurrences* 的点很可能会增加簇内对象之间的距离，这些点远离数据集的其它点，可以将其视为离群点。目前，关于离群点在聚类分析方面的应用已经作了诸多的研究，通常离群点被发现之后会直接将其移除。
+​	基于距离的聚类算法的主要目标是最小化同一个簇内对象之间的距离同时最大化簇间对象之间的距离。在高维数据空间中，*k-occurrences* 的偏度将会对上述两个对象造成影响。一方面，具有低 *k-occurrences* 的点很可能会增加簇内对象之间的距离，这些点远离数据集的其它点，可以将其视为离群点。目前，关于离群点在聚类分析方面的应用已经作了诸多的研究，通常离群点被发现之后会直接将其移除。另一方面，具有高 *k-occurrences* 的点，也就是hubs ，很有可能会接近簇的中心。另外， *hubness* 的度依赖于数据的本征维数而非嵌入维数（embedding dimensionality），本征维数是指表示数据集所有点对之间的距离所需特征的最小数量。通常，*hubness* 与本征维数相关而与距离或相似度的度量方式无关。通常，低 high-hubness 分数表明该点远离数据样本中的其它点，并且很有可能是一个离群点。然而，在高维数据空间中，由于数据本身的分布情况使得 high-hubness 分数的点变得很普遍。这些点将会导致簇内样本之间距离的增加。同样值得注意的是，一些聚类算法因为 *hubs* 的存在而使聚类性能变差。这是因为某些 *hubs* 会接近来自不同簇的点[5]。之前已经提到过，相比其它点而言hubness 分数越高的点越容易接近簇的均值，随之而来变产生一个疑问：hubs 会是质心（medoids）吗？Nenad Toma sev 等人通过实验研究发现[8]：在低维数据空间中，hubs 远离簇的质心甚至远离普通的点。然而，随着维数的增加，==簇的质心到hubs的最小距离会逐渐收敛于簇的质心到mediods的最小距离==。这表明一些medoids就是hubs。然而，簇的质心到hubs的最大距离却没有上述的相关性。同时观测到随着每一次的聚类迭代，簇的质心到hubs 的最大聚类也逐渐减小，这就表明簇的质心越来越接近hubs。因此在高维数据中，hubs可以在很大程度上代表该簇中的元素。
 
-​				
+## hub聚类算法
+
+在k-means 迭代过程中，centroids 和 medoids 易趋向于接近 高 hubness 分值的点，而这意味着使用hubs作为prototype可以加快算法的收敛速度。Centroids依赖当前簇中的所有元素，而hubs依赖它们的近邻元素因此携带着很多局部的centrality的信息。Hubness主要可分为全局hubness和局部hubness。局部hubness是全局hubness在给定任一簇情况下的约束。因此，局部hubness的分数是指在同一个簇中的某个点的  *k-occurrences*  的数量。Hub聚类算法的计算复杂度主要是由计算hubness分数的代价决定的。![CentroidMedoids](Images/CentroidMedoids.png)
+
+
+
+​		
+
+### 1 Deterministic方法
+
+​	使用hubs进行聚类分析的一种简单方法是将它们作为簇的质心。该算法一般称为K-hubs算法，其算法思想如下：				
+
+Algorithms 1. K-hubs
+
+initializeClusterCenters();
+
+Cluster[] clusters = formClusters(); 	
+
+**repeat**
+
+​	float $\theta$ = getProbFromSchedule(t); 
+
+​	**for all** Cluster c $\in$ clusters **do**		
+
+​			DataPoint h = findClusterHub(c);
+
+​			setClusterCenter(c, h);		
+
+​	**end for**
+
+**until** noReassignments
+
+**return** clusters	
+
+尽管K-hubs聚类算法可以得到很好的聚类效果，但是它对初始中心点十分敏感。为了增加找到全局最优解的概率，将随机变量引入到了*K-hubs*中。
+
+### 2 Probabilistic方法
+
+尽管拥有最高hubness分值的点可以最大可能地代表簇中心，然而也不应该簇中其它点的相关信息。基于广泛使用的模拟退火方法实现了一个平方hubness-proportional的随机方法[d22]。将温度因子引入到 *K-hubs* 算法中，那么它的初始值就是完全随机的，该方法称为 *hubness-*
+*proportional clustering* （HPC）聚类算法，其算法思想如下：
+
+Algorithm 2. HPC. 
+
+initializeClusterCenters();
+
+Cluster[] clusters = formClusters(); 
+
+float t = $t_0$; initialize temperature 
+
+**repeat**
+
+​	float $\theta$ = getProbFromSchedule(t); 
+
+​	**for all** Cluster c $\in$ clusters **do**
+
+​		**if** randomFloat(0,1) < $\theta$  **then** 
+
+​			DataPoint h = findClusterHub(c);
+
+​			setClusterCenter(c, h);
+​		**else**
+
+​			**for all** DataPoint x $\in$ c **do**
+
+​				setChoosingProbability(x, $N_k^2(x)$); 
+
+​			**end for**
+
+​			normalizeProbabilities();
+
+​			DataPoint h = chooseHubProbabilistically(c); 
+
+​			setClusterCenter(c, h);
+
+​		**end if** 
+
+​	**end for**
+​	clusters = formClusters();
+
+​	t = updateTemperature(t); 
+
+**until** noReassignments
+
+**return** clusters	
+​	
+
+​	在高维数据空间中，Hubness-proportional 聚类算法可行的原因在于*k-occurrences*分布的偏度。Hubness分值越低的点成为簇中心的可能性越低。HPC 算法采用了一个相当繁琐的温度计方案 *getProbFromSchedule(t)*，概率迭代的次数$N_{Prob}$作为算法的参数，并且概率$\theta = min(1, t/N_{Prob})$。其它的随机方案也是可行的甚至会产生更好的聚类效果。
+
+
 ​			
 ​		
+​	
+
+
+​		
+​		
+​		
+​	
+
+### 3 Hybird方法
+
+
+
+​	K-hubs聚类算法和HPC聚类算法都没有关注数据或对象的表现形式（representation），它们只关注距离矩阵。然而，如果数据的表现形式是已知的，那么便可以利用centroids的相关性质进行聚类。使用点的hubness分数指导聚类搜索，最终会形成一个基于centroid的聚类结构。该算法称为*hubness-proportional K-means* （HPKM）聚类算法，它与 HPC聚类算法的唯一不同之处在于确定阶段使用的是k-means更新数值而非K-hubs。
+
+
+
+
+
+
+
+
+
+Algorithm 3. HPKM. 
+
+initializeClusterCenters();
+
+Cluster[] clusters = formClusters(); 
+
+float t = $t_0$; initialize temperature 
+
+**repeat**
+
+​	float $\theta$ = getProbFromSchedule(t); 
+
+​	**for all** Cluster c $\in$ clusters **do**
+
+​		**if** randomFloat(0,1) < $\theta$  **then** 
+
+​			DataPoint h = findClusterCentroid(c);
+
+​			setClusterCenter(c, h);
+​		**else**
+
+​			**for all** DataPoint x $\in$ c **do**
+
+​				setChoosingProbability(x, $N_k^2(x)$); 
+
+​			**end for**
+
+​			normalizeProbabilities();
+
+​			DataPoint h = chooseHubProbabilistically(c); 
+
+​			setClusterCenter(c, h);
+
+​		**end if** 
+
+​	**end for**
+
+​	clusters = formClusters();
+
+​	t = updateTemperature(t); 
+
+**until** noReassignments
+
+**return** clusters	
+​		
+
+
+​		
+​		
+​	​		
 ​	
 
 
@@ -426,6 +587,8 @@ PCA算法步骤：
 [d20] Rand, W. M. (1971). "Objective criteria for the evaluation of clustering methods". Journal of the American Statistical Association. American Statistical Association. 66 (336): 846–850.
 
 [d21]  Powers, David M W (2011). "Evaluation: From Precision, Recall and F-Measure to ROC, Informedness, Markedness & Correlation" (PDF). Journal of Machine Learning Technologies. 2 (1): 37–63.
+
+[d22] D. Corne, M. Dorigo, and F. Glover, New Ideas in Optimization. McGraw-Hill, 1999.
 
 
 
