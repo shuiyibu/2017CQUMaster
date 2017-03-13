@@ -3,6 +3,7 @@
 >- 关于 hubness 自适应的问题
 >  - 是否可用谱分析替代 PCA（通过谱分析，找相邻特征值 gap 较大的地方——这个方法我只了解个大概，而且我觉得“较大”这样的词也让它变得不能自动化了。）
 >- 观测迭代过程中轮廓系数是否逐渐稳定
+>- K-means的K注意大写
 
 # 大_面向高维数据的PCA-Hubness聚类方法
 
@@ -37,7 +38,7 @@
 
 # 1 绪论
 
-​	本章主要介绍论文的选题背景及其意义，阐述论文的研究方向和研究的主要内容，并对论文的整体结构作简要说明。
+​	本章主要介绍论文研究背景及其意义，阐述论文研究方向及其主要内容，同时对论文的整体结构作简要说明。
 
 ## 1.1 研究背景及意义
 
@@ -337,6 +338,12 @@ PCA算法步骤：
 
 ​	基于距离的聚类算法的主要目标是最小化同一个簇内对象之间的距离同时最大化簇间对象之间的距离。在高维数据空间中，*k-occurrences* 的偏度将会对上述两个对象造成影响。一方面，具有低 *k-occurrences* 的点很可能会增加簇内对象之间的距离，这些点远离数据集的其它点，可以将其视为离群点。目前，关于离群点在聚类分析方面的应用已经作了诸多的研究，通常离群点被发现之后会直接将其移除。另一方面，具有高 *k-occurrences* 的点，也就是hubs ，很有可能会接近簇的中心。另外， *hubness* 的度依赖于数据的本征维数而非嵌入维数（embedding dimensionality），本征维数是指表示数据集所有点对之间的距离所需特征的最小数量。通常，*hubness* 与本征维数相关而与距离或相似度的度量方式无关。通常，低 high-hubness 分数表明该点远离数据样本中的其它点，并且很有可能是一个离群点。然而，在高维数据空间中，由于数据本身的分布情况使得 high-hubness 分数的点变得很普遍。这些点将会导致簇内样本之间距离的增加。同样值得注意的是，一些聚类算法因为 *hubs* 的存在而使聚类性能变差。这是因为某些 *hubs* 会接近来自不同簇的点[5]。之前已经提到过，相比其它点而言hubness 分数越高的点越容易接近簇的均值，随之而来变产生一个疑问：hubs 会是质心（medoids）吗？Nenad Toma sev 等人通过实验研究发现[8]：在低维数据空间中，hubs 远离簇的质心甚至远离普通的点。然而，随着维数的增加，==簇的质心到hubs的最小距离会逐渐收敛于簇的质心到mediods的最小距离==。这表明一些medoids就是hubs。然而，簇的质心到hubs的最大距离却没有上述的相关性。同时观测到随着每一次的聚类迭代，簇的质心到hubs 的最大聚类也逐渐减小，这就表明簇的质心越来越接近hubs。因此在高维数据中，hubs可以在很大程度上代表该簇中的元素。
 
+
+
+# 高维数据聚类分析
+
+​	在诸多现实生活应用中，例如文本聚类和主题检测
+
 ## hub聚类算法
 
 在k-means 迭代过程中，centroids 和 medoids 易趋向于接近 高 hubness 分值的点，而这意味着使用hubs作为prototype可以加快算法的收敛速度。Centroids依赖当前簇中的所有元素，而hubs依赖它们的近邻元素因此携带着很多局部的centrality的信息。Hubness主要可分为全局hubness和局部hubness。局部hubness是全局hubness在给定任一簇情况下的约束。因此，局部hubness的分数是指在同一个簇中的某个点的  *k-occurrences*  的数量。Hub聚类算法的计算复杂度主要是由计算hubness分数的代价决定的。![CentroidMedoids](Images/CentroidMedoids.png)
@@ -442,14 +449,6 @@ float t = $t_0$; initialize temperature
 
 ​	K-hubs聚类算法和HPC聚类算法都没有关注数据或对象的表现形式（representation），它们只关注距离矩阵。然而，如果数据的表现形式是已知的，那么便可以利用centroids的相关性质进行聚类。使用点的hubness分数指导聚类搜索，最终会形成一个基于centroid的聚类结构。该算法称为*hubness-proportional K-means* （HPKM）聚类算法，它与 HPC聚类算法的唯一不同之处在于确定阶段使用的是k-means更新数值而非K-hubs。
 
-
-
-
-
-
-
-
-
 Algorithm 3. HPKM. 
 
 initializeClusterCenters();
@@ -494,7 +493,134 @@ float t = $t_0$; initialize temperature
 **until** noReassignments
 
 **return** clusters	
-​		
+​	
+
+
+
+
+
+
+
+### 4 Kernel GHPKM	
+
+​	K-hubs、GHPC 和 GHPKM 的主要缺陷是它们只能发现发现超球面的簇。然而这在许多领域是不够的，因此可以使用kernel方法来解决此问题。Kernel K-means 是K-means算法的一个扩展，K-hubs、GHPC和GHPKM同样是K-means的扩展，因此可以将这些算法与kernel方法结合进行聚类分析。
+
+​	令 $\pi_c$ 表示数据集的簇，其中$c \in {1,…,K}$，使用非线性函数 $\phi$，kernel GHPKM聚类算法的目标函数如下：
+
+​		$$F(\{\pi_c\}_{c=1}^K)=\sum_{c=1}^K\sum_{\mathbf X\in \pi_c} w(\mathbf X) \cdot ||\phi(\mathbf X)- p_c||^2 			(1)$$
+
+​	其中 $w(\mathbf x)$ 为每个点所对应的权重，$p_c$ 为每个簇的（prototype），这是kernel K-means和kernel GHPKM的第一个不同之处。在kernel K-means算法中，$p_c$ 并不一定是簇的（centroids），也可以是hubs。Kernel GHPKM算法可以使用与kernel K-means算法相同的最小化函数，也可以通过随机选择初始值来避免局部最优值的问题。
+
+​	令 $m_c$ 为簇 $c$ 的centrois，centroids可通过下面的等式（2）计算得出。令当前簇 *c* 的prototype hub为$p_c =h_c$，
+
+$$ m_c=\frac{\sum_{\mathbf X \in \pi_c}w(\mathbf X) \cdot \phi(\mathbf X) }{\sum_{\mathbf X \in \pi_c}w(\mathbf X)}$$
+
+> centroids minimize the weighted squared dis- tance to other mapped points in the cluster, as suggested by Equation 4. Using hubs as prototypes does not minimize this squared distance sum, but might be beneficial for different reasons.
+
+$$m_c=argmin_{\mathbf z} \sum_{\mathbf X \in \pi_c} w(\mathbf X) \cdot ||\phi(\mathbf X -\mathbf Z)^2||$$
+
+> The squared distance to the prototype can be easily calculated in the case when the prototype is selected from the cluster point pool. This actually speeds up the distance calculations somewhat. This dichotomy is given in Equation 5, and the formula for calculating the distance to the cluster centroid according to the kernel trick is given in Equation 6. This is necessary, as we are not explicitly mapping the points via the map φ , so there is no way to explicitly calculate the centroid itself in an effective manner.
+
+$$||\phi(\mathbf X)-p_c||^2=\begin{cases} ||\phi(\mathbf X)-m_c||^2   \text{	if }  p_c=m_c \\ K(\mathbf x,\mathbf x) +K(h_c,h_c)-2\cdot K(\mathbf x,h_c)  \text{	if } pc=h_c\end{cases}$$
+
+
+
+​	$$||\phi(\mathbf X)-m_c||^2$$
+
+$$=||\phi(\mathbf X)-\frac{\sum_{\mathbf Z \in \pi_c}w(\mathbf Z) \cdot \phi(\mathbf Z)}{\sum_{\mathbf Z\in \pi_c}w(\mathbf Z)}||^2$$
+
+$$=K(\mathbf x,\mathbf x)-2 \cdot \frac{\sum_{\mathbf Z \in \pi_c}w(\mathbf Z) \cdot K(\mathbf X, \mathbf Z)}{\sum_{\mathbf Z \in \pi_c}w(\mathbf Z)}+\frac{\sum_{\mathbf {Z_1,Z_2}\in \pi_c} w(\mathbf{Z_1}) \cdot w(\mathbf{Z_2}) \cdot K(\mathbf{Z_1,Z_2})}{(\sum_{\mathbf Z  \in \pi_c}  w(\mathbf Z)) ^2 }$$
+
+
+
+Algorithm 4. Kernel GHPKM. 
+
+initializeClusterCenters();
+
+float t = $t_0$; initialize temperature 
+
+**repeat**
+
+​	float $\theta$ = getProbFromSchedule(t); 
+
+​	**for all** Point x $\in$ dataset **do**
+
+​		closestCluster = NULL; 
+
+​		minimalDistance = MAX VALUE; 
+
+​		**for all** Cluster c $\in$ clusters **do**
+
+​			**if** getClusterCenter(c) NOT NULL **then**
+
+​				distance = getDistanceToHub(c);
+
+​				**if** distance $\leq$ minimalDistance **then**
+
+​					minimalDistance = distance;
+
+​					closestCluster = c;
+
+​				**end if** 
+
+​			**else**
+​				distance = getDistanceToCentroid(c);
+
+​				**if** distance ≤ minimalDistance **then**
+
+​					minimalDistance = distance;
+
+​					closestCluster = c;
+
+​				**end if** 
+
+​			**end if**
+
+​		**end for**
+
+​		assignPointToFutureCluster(x, closestCluster)
+
+​	**end for**
+
+​	updateClusterAssignments(); 
+
+​	**for all** Cluster c ∈ clusters **do**
+
+​		**if** randomFloat(0,1) < $\theta$ **then** 
+
+​			setClusterCenter(c, NULL);
+
+​		**else**
+
+​			**for all** DataPoint x $\in$ c **do**
+
+​				setChoosingProbability(x, $N_k^2(x)$); 
+
+​			**end for**
+
+​			normalizeProbabilities();
+
+​			DataPoint h = chooseHubProbabilistically(c); 
+
+​			setClusterCenter(c, h);
+
+​		**end if** 
+
+​	**end for**
+
+​	t = updateTemperature(t);
+
+​	calculateErrorFunction(); 
+
+**until** convergenceCriterion
+
+clusters = formClusters();
+
+**return** clusters
+
+
+
+
 
 
 ​		
