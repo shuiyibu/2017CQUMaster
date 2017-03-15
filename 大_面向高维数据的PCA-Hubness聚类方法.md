@@ -14,7 +14,7 @@
 >- 关于 hubness 自适应的问题
 >  - 是否可用谱分析替代 PCA（通过谱分析，找相邻特征值 gap 较大的地方——这个方法我只了解个大概，而且我觉得“较大”这样的词也让它变得不能自动化了。）
 >- 观测迭代过程中轮廓系数是否逐渐稳定
->- K-means的K注意大写
+>- K-Means的K M注意大写
 
 # 大_面向高维数据的PCA-Hubness聚类方法
 
@@ -105,21 +105,39 @@
 
 ​	针对传统的聚类分析算法所存在的问题，本文主要完成了以下几方面的工作：
 
-​	第一，研究了课题的相关背景及其意义，从数据挖掘的实践应用和理论基础两方面对聚类分析的国内外现状进行了概述总结，着重阐述了聚类分析在高维数据中所遇到的挑战。
+​	第一、研究了课题的相关背景及其意义，从数据挖掘的实践应用和理论基础两方面对聚类分析的国内外现状进行了概述总结，着重阐述了聚类分析在高维数据中所遇到的挑战。
 
-​	第二，通过查看相关的聚类分析算法文献，例如层次聚类算法、划分聚类算法、基于分布的聚类算法以及基于密度的聚类算法等，对以上算法有了一定的了解并总结出了优缺点及其适用范围。
+​	第二、通过查看相关的聚类分析算法文献，例如层次聚类算法、划分聚类算法、基于分布的聚类算法以及基于密度的聚类算法等，对以上算法有了一定的了解并总结出了优缺点及其适用范围。
 
-​	第三，比较了现有的聚类分析算法，如k-means，DBSCAN等，并且针对其基本思想进行了分析研究。研究表明，无论是基于距离的聚类算法还是基于密度的聚类算法都无法解决维数灾难的问题，同时研究了可在高维数据空间聚类的hub聚类算法。
+​	第三、比较了现有的聚类分析算法，如k-means，DBSCAN等，并且针对其基本思想进行了分析研究。研究表明，无论是基于距离的聚类算法还是基于密度的聚类算法都无法解决维数灾难的问题，同时研究了可在高维数据空间聚类的hub聚类算法。
 
-​	第四，将原有的基于hub的聚类分析算法与主成分分析相
+​	第四、将原有的基于hub的聚类分析算法与主成分分析相结合，提出“无损”降维聚类的PCA-Hubness聚类算法，该算法解决了高维数据中存在的冗余和噪声数据，同时在不损失重要的有价值信息的情况下对数据集进行降维，增强了算法的聚类性能。
+
+​	第五、本文采用若干个UCI数据集，将PCA-Hubness聚类算法与传统的K-means算法和hub聚类算法进行对比实验，揭示了无论数据集是否呈现出较高的hubness情况下该算法均可以取得不错的聚类效果。若数据集未呈现出较高的hubness现象时，传统的K-means方法更为适用；然而，当数据集表现出较高的hubness现象时，hub聚类算法则会取得不错的聚类效果。根据对比实验结果揭示了该算法的聚类效果相对较佳，同时给出了详细的实验结果分析，以及深入讨论了各算法的适用性和优缺点。
 
 ## 1.4 论文的章节排版
 
+​	本文大致分为5大章节，详细的论文排版结构如下：
+
+​	第1章 绪论：主要概述了数据挖掘领域的研究背景及其意义，着重分析了传统聚类算法和hub聚类算法，同时阐述了聚类分析的现实意义和价值。
+
+​	第2章 聚类分析概述：介绍了当前主流的几大经典聚类算法，着重研究了基于距离的划分聚类方法和基于密度的聚类分析方法，并且列出了各类算法的适用性和优缺点。最后，对当前聚类分析的发展趋势和热点问题进行了简要地概述和总结。
+
+​	第3章 Hub聚类算法及其改进：详细地介绍了hubness这一现象的相关概念、定义以及聚类分析算法，通过实验对hub聚类算法进行分析研究，获得其适用性及优缺点。同时，利用逆近邻的偏度与本征维数的强烈正相关性，使得hub聚类算法的适用范围更广。
+
+​	第4张 基于PCA-Hubness的聚类方法：由于原先的hub聚类算法无法处理高维数据空间中的冗余和噪声数据使得聚类效果不佳。基于PCA-Hubness的聚类方法以逆近邻偏度的变化率作为降维标准，在降维的同时保留了大量有价值信息从而提高了聚类效果。在UCI的若干个数据集上进行实验分析，将该算法与K-means算法以及hub聚类算法等进行实验对比分析，并通过轮廓系数作为聚类结果的评价指标，最终的实验结果表明该算法的有效性。
+
+​	第5章 总结与展望：主要对本文中的重点工作进行了概括总结，同时指出研究过程中存在的不足，并且对将来的工作以及研究重点作了简要的说明。
+
+
+
 # 2 聚类分析概述
+
+​	聚类分析（Cluster analysis），也称为群集分析，常用于统计数据分析，在诸多领域均拥有广泛应用。聚类是将元素分成不同的组别或者更多的子集，使得分配到相同簇中的元素彼此之间比其它的数据点更为相似，也就是说，聚类算法的目的是要增加类内的相似性并减小类间的相似性。聚类分析不同于分类，分类常被视为是有监督的学习，而聚类分析一般归纳为一种非监督式的学习。聚类分析不依赖于先验知识（类标签），只依赖自身属性用以区分簇之间的相似性或对象之间的相似性。聚类分析作为一门十分有效的数据分析技术，常被应用于机器学习、数据挖掘、模式识别以及生物信息等领域。综述文献==【】==详尽的描述了各种聚类算法，聚类算法可大致分为层次聚类算法、基于==质心==的聚类算法、基于分布的聚类算法以及基于密度的聚类算法。本章主要阐述了各类聚类算法的基本思想及其研究现状。
 
 ## 2.1 聚类分析的定义
 
-​	由于难以对簇的概念作出准确定义导致有诸多的聚类算法产生，这些聚类算法使用了不同的聚类模型，主流的聚类模型包括：
+​	由于难以对簇的概念作出准确定义从而导致有诸多的聚类算法产生[d4]。虽然不同的聚类算法对簇的概念定义不同，但是它们却有却有一个共同点———簇是一组数据对象。不同聚类算法使用了不同的聚类模型，掌握聚类模型是了解聚类算法的关键，下面列出了主流的聚类模型：
 
 （1）连通性模型（Connectivity Models），例如层次聚类基于距离连通性构建模型；
 
@@ -135,7 +153,13 @@
 
 （7）基于图论的模型（Graph-Based Models）：图中的节点分成了若干个子集，在这些子集中的每两个点都通过一条边相连。
 
-​	根据聚类结果，聚类可以大致分为以下几种：
+​	从本质上来说，聚类分析就是一组簇的集合，该集合通常包含数据集的所有对象。聚类分析可以大致地分为以下两种：
+
+（1） 硬聚类（hard clustering）：每个数据对象要么属于一个簇，要么不属于任何簇；
+
+（2）软聚类（soft clustering，也称为模糊聚类fuzzy clustering）：每个数据对象有一定的概率属于每个簇。
+
+​	同时严格的聚类划分如下所示：
 
 （1）严格划分聚类，每个对象正好属于一个簇；
 
@@ -151,11 +175,13 @@
 
 
 
+> 增加内容 https://zhuanlan.zhihu.com/p/22452157
+
 ## 2.2 常用的聚类分析算法
 
 下面仅列出最主流的聚类算法。
 
-(1) 层次聚类算法
+### 2.2.1 层次聚类算法
 
 ​	层次聚类算法也称作基于连通性的聚类算法，其核心思想是若两个对象越接近，那么它们的相关性就越强。这些算法基于对象间的距离将彼此连通从而形成不同的簇。在很大程度上，一个簇可以由该簇内的最大连通距离来表示。不同的距离会形成不同的簇，这可以通过树形结构来表示，这也是层次聚类名称的来源。层次聚类可分为两大类：（1）自底向上（agglomerative）（2）自顶向下（divisive）。自底向上是开始时所有数据点均各自为一个类别，然后每次迭代将距离最近的两个类合并，直到只有一个类为止。自顶向下的思想与自底向上的思想正好完全相反。计算两个类之间的距离共有三种方法：
 
@@ -163,15 +189,15 @@
 - Complete Linkage：与 Single Linkage 的反面极端，是指集合之间的距离为这两个集合中距离最远的两个点之间的距离。负面效果显而易见，原本已经很近的两个簇，只因有不配合的点存在而不能合并。
 - Group Average：是指把集合之间的距离为所有点对的距离的平均值。
 
- ​虽然层次聚类的核心思想比较简单，但是计算复杂度却比较高。因为上述的三种方法均需要计算所有点对之间的距离，而且算法也表明每次迭代只能合并两个子类，这是非常耗时的。
+ 虽然层次聚类的核心思想比较简单，但是计算复杂度却比较高。因为上述的三种方法均需要计算所有点对之间的距离，而且算法也表明每次迭代只能合并两个子类，这是非常耗时的。
 
-（2）基于质心的聚类
+### 2.2.2 基于质心的聚类算法
 
 ​	在基于质心的聚类中，由中心向量表示一个簇，该簇的中心元素不一定是数据集中的元素。当簇的个数为定值 $k$ 时，k-means 聚类方法给出了关于最优化问题的形式定义：搜寻 $k$ 个簇中心，然后将对象划分给与之最近的簇中心所在的簇。k-means 的目的是最小化簇内平方和（WCSS within-cluster sum of squares）。最优化问题本身是一个 NP 难问题，因此常见的方法是找到其近似解。最著名的近似方法是 Lloyd's[d5]，也就是 k-means 算法。然而，k-means 算法智能只能找到局部最优值，而且使用的是随机的初始化值。k-means 的衍生算法作了如下的改进：选择多次运行的最优值，并且将簇中心限定为数据集中的元素（k-medoids）；选择中值作为簇中心（k-medians）；较少的选择随机值作为簇中心（K-means++）；或者可以模糊聚类（Fuzzy c-means）。大多数基于 k-means 算法的最大缺点之一是需要预先指定簇的个数 $k$。此外，由于这些算法均是基于簇中心的，所以更容易形成大小相似的簇，这通常导致簇之间不正确的边界切割。
 
 ​	K-means 有以下重要的理论性质。首先，它可以将数据划分为 Voronoi 图结构。其次，在理论上它与最近邻概念接近，因此在机器学习领域大受欢迎。最后，它可以被视为基于模型分类的变形，并且k-means 算法是EM算法的一种变形。
 
-（3）基于分布的聚类
+### 2.2.3 基于分布的聚类算法
 
 ​	与统计学最密切相关的聚类模型是基于分布的模型。对象的分布越相似，它们分配在同一个簇的可能性越大。该方法易于处理类似于人工生成的数据集（从分布中随机取样）。虽然基于分布的聚类方法有着优秀的理论基础，但是它们却容易导致过拟合问题。因此，我们需要对这类模型添加复杂性约束。从理论上而言，选择越复杂的模型越能更好地结束数据，然而选择适当的模型复杂度却是困难的。
 
@@ -187,7 +213,7 @@ $$=\sum_{k=1}^K N(x|\mu_k, \sigma_k)$$
 
 其中 $K$ 为模型的个数，$\pi_k$为第k个高斯的权重，则为第 $k$ 个高斯的概率密度函数，其均值为$\mu_k$，方差为 $\sigma_k$。我们对此概率密度的估计就是要求$\pi_k$、$\mu_k$和$\sigma_k$各个变量。当求出的表达式后，求和式的各项的结果就分别代表样本x属于各个类的概率。高斯混合模型的优点是投影后的样本点将获得每个类的概率，而非一个确切的分类标签。相对于 k-means 算法，高斯混合模型每一次的迭代计算量均较大。由于高斯混合模型的聚类方法来源于 EM 算法，因此可能会产生局部极值，这与出事参数选取密切相关。高斯混合模型不仅可以用于聚类分析，同样也可用于概率密度估计。
 
-（4）基于密度的聚类
+### 2.2.5 基于密度的聚类算法
 
 ​	基于密度的聚类分析算法的主要目是搜寻被低密度区域分割的高密度区域。不同于基于距离的聚类算法（基于距离的聚类算法是以球状簇为前提进行聚类的），基于密度的聚类算法可以发现任意形状的簇，这有利于处理带有噪声点的数据。分布在稀疏区域的对象通常被认为是噪声或边界点。
 
@@ -205,7 +231,37 @@ $$=\sum_{k=1}^K N(x|\mu_k, \sigma_k)$$
 
 ![3聚类算法的比较图](Images/3聚类算法的比较图.png)
 
+
+
+| 算法名称                         | 参数                                       | 可扩展性                                     | 用例                                       | 几何结构（度量标准）                               |
+| ---------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| K-Means                      | number of clusters                       | Very large n_samples, medium n_clusters with MiniBatch code | General-purpose, even cluster size, flat geometry, not too many clusters | Distances between points                 |
+| Affinity  propagation        | Damping, sample preference               | Not scalable with n_samples              | Many clusters, uneven cluster size, non-flat geometry | Graph distance(e.g. nearest-neighbour graph) |
+| Mean-shift                   | bandwidth                                | Not scalable with n_samples              | Many clusters, uneven cluster size, non-flat geometry | Distances between points                 |
+| Spectral clustering          | number of clusters                       | Medium n_samples, small n_clusters       | Few clusters, even cluster size, non-flat geometry | Graph distance(e.g. nearest-neighbour graph) |
+| Ward hierarchical clustering | number of clusters                       | Large n_samples and n_clusters           | Many clusters,  possibly connectivity constraints | Distances between points                 |
+| Agglomerative clustering     | number of clusters, linkage type, distance | Large n_samples and n_clusters           | Many clusters, possibly connectivity constraints, non Euclidean distances | Any pairwise distance                    |
+| DBSCAN                       | neighborhood size                        | Very large n_samples, medium n_clusters  | Non-flat geometry, uneven cluster sizes  | Distances between nearest points         |
+| Gaussian mixtures            | many                                     | Not scalable                             | Flat geometry, good for density estimation | Mahalanobis distances to centers         |
+| Birch                        | branching factor, threshold, optional global clusterer | Large n_samples and n_clusters           | Large dataset, outlier removal, data reduction | Euclidean distance between points        |
+
 ## 2.3 聚类分析的评价标准
+
+​	每种聚类算法都有其各自的适用范围，有的适用于小型数据集，有的可以处理大型数据，有的可以发现任意形状的簇。但总的来说，数据挖掘针对聚类分析有以下评价标准：
+
+（1）可伸缩性：数据集的大小不会明显影响聚类结果的准确度。
+
+（2）处理不同类型属性的能力：可以处理二元类型数据、分类／标称类型数据、序数型数据等。
+
+（3）可以发现任意形状的簇：基于距离的聚类算法通常是通过区分对象之间的相似度进行聚类分析的，这类聚类算法趋向于发现数据规模相同和类球形的簇。然而，现实生活中数据集的簇可能是任意类型的。
+
+（4）初始化参数的数量最小化：聚类分析算法的参数选择一直是一个备受关注的问题。若聚类算法对参数选择十分敏感，那么聚类结果的准确性将变得不稳定。
+
+（5）处理噪声和冗余数据的能力：数据集的噪声和冗余数据通常会使得聚类结果产生较大的差异。
+
+（6）处理高维数据的能力：由于高维数据的稀疏性和距离集中使得一些算法的聚类结果相较低维数据变得很差。
+
+（7）可解释性和可用性；能够对聚类分析结果进行合理地解释，并说明其实际的应用场景。
 
 
 
@@ -281,13 +337,66 @@ $$F_{\beta} = \frac{(\beta^2 +1 ) \cdot P \cdot R}{\beta^2 \cdot P+R}$$
 
 其中，$\beta = 0$ 时，$F_0 = P$。换言之，当 $\beta = 0$ 时，召回度对 F-measure 无影响。随着 $\beta$  的增加，召回度在 F-measure 的权重也在增加。
 
-# 3 hub 
+## 2.5 本章小节
+
+​	本章主要概述了聚类分析的相关信息，首先对聚类分析的定义作了详细说明，介绍了几种主流的聚类模型，主要包括连通性模型、==中心性==模型、分布模型、密度模型以及子空间模型等等；其次，详细介绍了主流的聚类分析算法，主要包括层次聚类算法、基于==质心==的聚类算法、基于分布的聚类算法以及基于密度的聚类算法，并且列出了代表算法的适用性和优缺点；再次，介绍了聚类分析常用的评价标准；最后，详细介绍了聚类分析的评估检验方法，主要包括内部检验和外部检验。
+
+# 3 Hub 聚类算法及其改进 
+
+> 概括性语句
+
+## 3.1 维数灾难
+
+>- https://zh.wikipedia.org/wiki/%E7%BB%B4%E6%95%B0%E7%81%BE%E9%9A%BE
+>- https://en.wikipedia.org/wiki/Curse_of_dimensionality
+
+
+
+​	维数灾难（Curse of Dimensionality），也称作维度的诅咒，这一术语最初是由 Bellman 在1961年考虑优化问题时引入的。维数灾难用于描述当数据空间的维数增加时，因其数据的体积呈指数型增长而遇到诸多问题的现象，并且该类现象不会出现在低维数据空间中。维数灾难在诸多领域引发了各种各样的问题，这些问题问题的共同之处在于随着数据的维数增加，数据的体积呈指数型增长，从而导致可用数据变得十分稀疏。稀疏性问题对于任何基于统计学的方法均是一个严峻的挑战。在机器学习领域的挑战中，通过从高维特征空间的有限训练数据中获得一种某种“自然状态”，在训练样本的数量恒定时，随着维度的增加其预测能力逐渐减小，这通常称为Hughes 影响[d23]或Hughes现象[d24]\[d25]。在距离度量的挑战中，高维数据空间的不同样本之间的距离变得基本相同。在高维欧几里德空间中超球体的体积计算公式如下：
+
+$$\frac{2r^d \pi ^{d/2}}{d\Gamma(d/2)}$$
+
+其中 *r* 为超球体的半径，*d* 为数据集的维数。超立方体的计算公式为：$(2r)^d$ 。当空间维数趋向于正无穷时，超球体体积与超立方体体积的比值趋向于 0 ，如以下等式所示：
+
+$$\lim_{d \to \infty} \frac{\pi ^{d/2}}{d2^{d-1}\Gamma(d/2)} \rightarrow 0$$
+
+从某种意义上而言，在高维数据空间中几乎所有的数据都远离数据集的中心。从另一个角度看，比较高维数据空间中的最小值和最大值距离，其公式如下：
+
+$$\lim_{d \to \infty}\frac{dist_{max}-dist_{min}}{dist_{min}} \rightarrow 0$$
+
+可以看出当空间维数趋向于无穷时，最小值和最大值的距离趋向于相同，从而证明在高维数据空间中距离函数变得不再有意义。
+
+​	在最近的研究中，Zimek等人定义了在搜索高维空间数据时出现的问题：
+
+（1）分数和距离的集中：用于区分数据样本的相关值（如距离）变得十分相似；
+
+（2）不相关的属性：在高维数据空间中大量的属性可能是不相关的；
+
+（3）参考集的定义：对于局部方法，参考集通常是基于最近邻的；
+
+（4）无可比性的分数：不同的子空间会产生不具有可比性的分数；
+
+（5）分数的可解释性：分数通常不再具有语义上的意义；
+
+（6）指数搜索空间：搜索空间无法进行系统性地扫描；
+
+（7）Hubness：某些对象容易频繁地出现在其它对象的近邻列表中。
+
+目前，许多专门的方法只针对这些问题中的一个问题进行研究，留下很多开放性的问题值得我们继续研究。
+
+
+
+
+
+
+
+
 
 > a thorough discussion of the necessary conditions for hubness to occur in high dimensions will be given in Section 5.2.
 
 
 
-> 维数灾难（Curse of Dimensionality），这一术语最初是由 Bellman 在1961年考虑优化问题时引入的，如今主要是指由数据空间中的高维数据向诸多领域所引发的挑战。在机器学习领域，受影响的方法和任务包括贝叶斯建模（Bishop，2006）、最近邻预测（Hastie et al。，2009）及搜索（Korn et al。，2001） 等。维数灾难造成的影响之一是距离集中（Distance Concentration），这是说在高维数据中的点对之间的距离渐渐趋向于相同。Hinneburg 和 Aggarwal 等人已经对高维数据中的距离集中和无意义的最近邻作了深入的研究。维数灾难造成的另一方面影响是 hubness。令 $D \subset R^d$，$D$ 为 $R^d$ 空间中的数据集，$N_k(x)$ 是数据集 $D$ 中的点 $x$ 的 $k-occurrences$ 值，$k-occurrences$  是指点 $x$ 出现在其它点的 $k$ 近邻列表中的次数。随着数据集维数的增加，$N_k$ 的分布开始逐渐向右倾斜，这导致了 $hubs$ 的出现， $hubs$ 是指那些极易出现在其它点的 $k$ 近邻列表中的点。不同于距离集中，hubness 及其影响在机器学习中并未引起太多的关注。~~The effect of the phenomenon on machine learning was demon- strated, for example, in studies of the behavior of kernels in the context of support vector machines, lazy learning, and radial basis function networks (Evangelista et al., 2006; Franc ̧ois, 2007).（例如，在支持向量机，惰性学习和径向基函数网络（Evangelista et al。，2006; François，2007）上下文中内核行为的研究中证明了这种现象对机器学习的影响。 ）~~
+> 在机器学习领域，受影响的方法和任务包括贝叶斯建模（Bishop，2006）、最近邻预测（Hastie et al。，2009）及搜索（Korn et al。，2001） 等。维数灾难造成的影响之一是距离集中（Distance Concentration），这是说在高维数据中的点对之间的距离渐渐趋向于相同。Hinneburg 和 Aggarwal 等人已经对高维数据中的距离集中和无意义的最近邻作了深入的研究。维数灾难造成的另一方面影响是 hubness。令 $D \subset R^d$，$D$ 为 $R^d$ 空间中的数据集，$N_k(x)$ 是数据集 $D$ 中的点 $x$ 的 $k-occurrences$ 值，$k-occurrences$  是指点 $x$ 出现在其它点的 $k$ 近邻列表中的次数。随着数据集维数的增加，$N_k$ 的分布开始逐渐向右倾斜，这导致了 $hubs$ 的出现， $hubs$ 是指那些极易出现在其它点的 $k$ 近邻列表中的点。不同于距离集中，hubness 及其影响在机器学习中并未引起太多的关注。~~The effect of the phenomenon on machine learning was demon- strated, for example, in studies of the behavior of kernels in the context of support vector machines, lazy learning, and radial basis function networks (Evangelista et al., 2006; Franc ̧ois, 2007).（例如，在支持向量机，惰性学习和径向基函数网络（Evangelista et al。，2006; François，2007）上下文中内核行为的研究中证明了这种现象对机器学习的影响。 ）~~
 
 
 
@@ -788,6 +897,14 @@ clusters = formClusters();
 [d21]  Powers, David M W (2011). "Evaluation: From Precision, Recall and F-Measure to ROC, Informedness, Markedness & Correlation" (PDF). Journal of Machine Learning Technologies. 2 (1): 37–63.
 
 [d22] D. Corne, M. Dorigo, and F. Glover, New Ideas in Optimization. McGraw-Hill, 1999.
+
+
+
+[d23] Oommen, T. .; Misra, D. .; Twarakavi, N. K. C.; Prakash, A. .; Sahoo, B. .; Bandopadhyay, S. . An Objective Analysis of Support Vector Machine Based Classification for Remote Sensing. Mathematical Geosciences. 2008, 40 (4): 409. doi:10.1007/s11004-008-9156-6. 
+
+[d24] Hughes, G.F., 1968. "On the mean accuracy of statistical pattern recognizers", IEEE Transactions on Information Theory, IT-14:55-63.
+
+[d25] Not to be confused with the unrelated, but similarly named, Hughes effect in electromagnetism (named after Declan C. Hughes) which refers to an asymmetry in the hysteresis curves of laminated cores made of certain magnetic materials, such as permalloy or mu-metal, in alternating magnetic fields.
 
 
 
