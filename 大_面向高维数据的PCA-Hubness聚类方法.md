@@ -345,6 +345,8 @@ $$F_{\beta} = \frac{(\beta^2 +1 ) \cdot P \cdot R}{\beta^2 \cdot P+R}$$
 
 > 概括性语句
 
+~~令 $D \subset R^d$，$D$ 为 $R^d$ 空间中的数据集，$N_k(x)$ 是数据集 $D$ 中的点 $x$ 的 $k-occurrences$ 值，$k-occurrences$  是指点 $x$ 出现在其它点的 $k$ 近邻列表中的次数。随着数据集维数的增加，$N_k$ 的分布开始逐渐向右倾斜，这导致了 $hubs$ 的出现， $hubs$ 是指那些极易出现在其它点的 $k$ 近邻列表中的点。不同于距离集中，hubness 及其影响在机器学习中并未引起太多的关注。The effect of the phenomenon on machine learning was demon- strated, for example, in studies of the behavior of kernels in the context of support vector machines, lazy learning, and radial basis function networks (Evangelista et al., 2006; Franc ̧ois, 2007).（例如，在支持向量机，惰性学习和径向基函数网络（Evangelista et al。，2006; François，2007）上下文中内核行为的研究中证明了这种现象对机器学习的影响。 ）~~
+
 ## 3.1 维数灾难
 
 >- https://zh.wikipedia.org/wiki/%E7%BB%B4%E6%95%B0%E7%81%BE%E9%9A%BE
@@ -392,149 +394,101 @@ $$\lim_{d \to \infty}\frac{dist_{max}-dist_{min}}{dist_{min}} \rightarrow 0$$
 
 
 
+## 3.2 Hubness 现象
+
+
+
 > a thorough discussion of the necessary conditions for hubness to occur in high dimensions will be given in Section 5.2.
 
+​	在机器学习领域，受维数灾难影响的方法和任务包括贝叶斯建模（Bishop，2006）、最近邻预测（Hastie et al。，2009）及搜索（Korn et al。，2001） 等。维数灾难造成的影响之一是距离集中（Distance Concentration），这是说在高维数据中点对之间的距离渐渐趋向于相同。Hinneburg 和 Aggarwal 等人已经对高维数据中的距离集中和无意义的最近邻作了深入的研究。维数灾难造成的另一方面影响是 hubness。令 $D ⊂ \Bbb R^d，d\in\{1,2,…\}$ 表示一组数据点，其中 $\mathbf {x_1},\mathbf {x_2},…\mathbf {x_n}$ 为数据集 $D$ 的元素。令 *dist* 表示在 $\Bbb R^d$ 空间中的一个距离函数 $p_{i,k}$，其中 $i, k \in \{1,2,…,n\}$ 如下定义：
 
+​						$$p_{i,k}(\mathbf x)=\begin{cases} 1, & \text{if $\mathbf x$ is among k nearest neighbours of $\mathbf {x}_i$, according to $dist$} \\0  & \text{otherwise} \end{cases}$$
 
-> 在机器学习领域，受影响的方法和任务包括贝叶斯建模（Bishop，2006）、最近邻预测（Hastie et al。，2009）及搜索（Korn et al。，2001） 等。维数灾难造成的影响之一是距离集中（Distance Concentration），这是说在高维数据中的点对之间的距离渐渐趋向于相同。Hinneburg 和 Aggarwal 等人已经对高维数据中的距离集中和无意义的最近邻作了深入的研究。维数灾难造成的另一方面影响是 hubness。令 $D \subset R^d$，$D$ 为 $R^d$ 空间中的数据集，$N_k(x)$ 是数据集 $D$ 中的点 $x$ 的 $k-occurrences$ 值，$k-occurrences$  是指点 $x$ 出现在其它点的 $k$ 近邻列表中的次数。随着数据集维数的增加，$N_k$ 的分布开始逐渐向右倾斜，这导致了 $hubs$ 的出现， $hubs$ 是指那些极易出现在其它点的 $k$ 近邻列表中的点。不同于距离集中，hubness 及其影响在机器学习中并未引起太多的关注。~~The effect of the phenomenon on machine learning was demon- strated, for example, in studies of the behavior of kernels in the context of support vector machines, lazy learning, and radial basis function networks (Evangelista et al., 2006; Franc ̧ois, 2007).（例如，在支持向量机，惰性学习和径向基函数网络（Evangelista et al。，2006; François，2007）上下文中内核行为的研究中证明了这种现象对机器学习的影响。 ）~~
-
-
-
-## Hubness 现象
-
-令 $D ⊂ R^d，d\in\{1,2,…\}$ 表示一组数据点，其中 $x_1,x_2,…x_n$ 为数据集 $D$ 的元素。令 $dist$ 表示在 $R^d$ 空间中的一个距离函数 $p_{i,k}$，其中 $i, k \in \{1,2,…,n\}$ 如下定义：
-
-​						$$p_{i,k}=\begin{cases} 1, & \text{if $x$ is among k nearest neighbours of $x_i$, according to $dist$} \\0  & \text{otherwise} \end{cases}$$
-
-​	在此基础之上，定义 $N_k(x)=\sum_{i=1}^np_{i,k}(x)$，$N_k(x)$ 表示为在 $R^d$ 空间中，$x$ 出现在其它 k-nearest neighbor 列表中的次数，也记为 K-occurrence，仅根据数据点的 K-occurrence 的大小无法确定 hubness 对实验结果有何种影响。 数据点的 bad k-occurrences 表示为 $B_{N_K (x)}$，是指数据点 x 作为数据集 D 中其它的点的 k-nearest neighbor次数，并且 x 点的标签和那些点的标签不匹配。数据点的 good k-occurrences 表示为 $G_{N_K(x)}$， 是指点 x 的标签与那些点的标签相匹配[5]。为了表征 $N_k$ 的非对称性，我们使用 k-occurrences 分布的标准第三矩（也称作偏度）[b1]，
+​	在此基础之上，定义 $N_k(\mathbf x)=\sum_{i=1}^np_{i,k}(\mathbf x)$，$N_k(\mathbf x)$ 表示为在 $R^d$ 空间中，$\mathbf x$ 出现在其它 k-nearest neighbor 列表中的次数，也记为 K-occurrence，仅根据数据点的 K-occurrence 的大小无法确定 hubness 对实验结果有何种影响。 数据点的 bad k-occurrences 表示为 $B_{N_K (\mathbf x)}$，是指数据点 $\mathbf x$ 作为数据集 *D* 中其它的点的 *k* nearest neighbor 次数，并且  $\mathbf x$  点的标签和那些点的标签不匹配。数据点的 good k-occurrences 表示为 $G_{N_K(\mathbf x)}$， 是指点  $\mathbf x$  的标签与那些点的标签相匹配[5]。为了表征 $N_k$ 的非对称性，我们使用 *k-occurrences* 分布的标准第三矩（也称作偏度）[b1]，
 
 ​									$$S_{N_k}=\frac{E(N_k-\mu_{N_k})^3}{\sigma_{N_k}^3}$$
 
-其中 $\mu_{N_k}$ 和 $\sigma_{N_k}$ 分别是 $N_k$ 的均值和标准差。偏度是用于衡量实数域中随机变量分布的不对称性。偏度的值有正负之分，偏度为负则表明绝大多数的值（包括中值在内）位于平均值的右侧；偏度为正则表明绝大多数的值（不一定包括中值）位于平均值的左侧；偏度为零则表明数值近似地均匀分布在均值的两侧，却不一定为对称分布。
+其中 $\mu_{N_k}$ 和 $\sigma_{N_k}$ 分别是 $N_k$ 的均值和标准差。偏度常常用于概率学和统计论中，衡量实数域中随机变量分布的不对称性。偏度的值有正负之分，偏度为负则表明绝大多数的值（包括中值在内）位于平均值的右侧；偏度为正则表明绝大多数的值（不一定包括中值）位于平均值的左侧；偏度为零则表明数值近似地均匀分布在均值的两侧，却不一定为对称分布。偏度一般分为两种：
+
+（1）左偏态或副偏态：数据的主体集中在右侧，左侧会呈现出较长的尾部；
+
+（2）右偏态或正偏态：数据的主体集中在左侧，右侧会呈现出较长的尾部；
+
+![4Negative and positive skew diagrams](Images/4Negative and positive skew diagrams.png)
+
+
+
+
+
+图4 负偏态（左）和正偏态（右）图
+
+​	若用三阶标准矩来表示随机变量 *X* 的偏度 $\gamma_1$，那么偏度可被定义为：
+
+$$\gamma_1= \operatorname E \Big [ \Big (\frac{X-\mu}{\sigma} \Big )^3 \Big]=\frac{\mu_3}{\sigma^3}=\frac{\operatorname E \Big [ \Big ( X -\mu \Big)^3 \Big]}{\operatorname E \Big( \Big [ \Big(X-\mu \Big)^2 \Big]\Big)^{3/2}}=\frac{\kappa_3}{\kappa_2^{3/2}}$$
+
+其中 $\mu_3$ 为三阶中心矩，$\sigma$ 为标准方差，$\operatorname E$ 为期望算子。等式最终以三阶累积量和二阶累积量的1.5 次方的比值来表示偏度，偏度也可用Skew[*X*]来表示。偏度也可用非中心矩 $E[X^3]$ 来表示，公式如下：
+
+$$\gamma _{1}=\operatorname {E} {\bigg [}{\Big (}{\frac {X-\mu }{\sigma }}{\Big )}^{\!3}\,{\bigg ]}={\frac {\operatorname {E} [X^{3}]-3\mu \operatorname {E} [X^{2}]+2\mu ^{3}}{\sigma ^{3}}}=\frac {\operatorname {E} [X^{3}]-3 \mu \sigma ^{2}-\mu ^{3}}{\sigma ^{3}}$$
+
+
+
+### 3.2.1 $N_k$ 的分布与维数的关系
+
+​	为了研究 $N_k$ 分布与数据集维数的关系进行了以下的实验证明【】。从[0,1]的均匀分布中随机抽取10000个维数为 *d*  的样本点，这些样本点之间彼此独立，采用以下三种距离度量方式构建 *K* 近邻列表：Euclidean（$l_2$）、fractional $l_{0.5}$ （proposed for high-dimensional databy Aggarwal et al., 2001）【d26】以及 cosine。图5（a-c）描述的是当 *k* = 5 时，$N_k$的分布情况，其中数据集的维数 *d* 分别为：（a）*d* = 3，（b）*d* = 20，（c）*d* = 100。同样图5（d-f）描述的是从正态分布抽样获得的数据集的$N_k$的分布情况。需要说明的一点是，*k* = 5 是一个经验值，当*k*取其它值时也可获得类似的结果。
+
+​	当数据集的维数 *d* = 3 时，在三种度量方式下$N_5$的分布近似于二项分布（图5（a，d））。在低维数据空间中，随机取样的点的双向图的度的分布近似于Erdo ̋s-Re ́nyi (ER) 随机图模型的度分布。随着维数的增加，$N_5$ 的分布将会逐渐偏离随机图模型的分布而且开始向右倾斜（图5（b，c）以及图5（e，f）其中度量方式为$l_2$和$l_{0.5}$）。通过上述实验可以观测到，在高维数据空间中偏度和hubs的确存在。$N_k$的偏度越大与之对应的数据集的hubness越强烈。
 
 ![DistributionOfNk](Images/DistributionOfNk.png)
 
 
 
+图5 在不同维数、不同距离度量方式情况下样本数为10000的数据集的 $N_k$ 分布图
 
-
-​	斯皮尔曼等级相关系数（Spearman correlation），用于评估两个变量相关性的非参数指标，记作 $\rho$。对于样本数为 $n$ 的数据集 $\mathbf X, \mathbf Y$，$x_i, y_i$ 为其对应的等级数据，相关系数$\rho$ 为：
-
-
+​	为了研究 $N_k$ 的偏度与数据集维数的相关性，采用斯皮尔曼等级相关系数进行评测。斯皮尔曼等级相关系数（Spearman correlation），用于评估两个变量相关性的非参数指标，记作 $\rho$ [d27]。对于样本数为 $n$ 的数据集 $\mathbf X_i, \mathbf Y_i$，$x_i, y_i$ 为其对应的等级数据，相关系数 $\rho$ 为：
 
 $$\rho = \frac{\sum_i(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_i(x_i-\bar{x})^2\sum_i(y_i-\bar{y})^2}}$$
 
-
-
-​	在现实应用中，变量之间的连接并没有显著作用，因此可以对 $\rho$ 进行如下简化：
+​	在现实应用中，变量之间的连接并没有显著作用，因此可以对 $\rho$ 进行如下简化[d28]：
 
 ​		$$\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 -1)}$$
 
 其中，$d_i$ 表示被评估的两个变量等级之间的差值，$n$ 为样本数。斯皮尔曼相关系数阐述了 **X** (独立变量) 与 **Y** (依赖变量)的相关性。 若变量 **X** 增加时， 变量 **Y** 也增加，那么斯皮尔曼相关系数的值为正数；若变量 **X** 增加时，变量 **Y** 却在减少，那么斯皮尔曼相关系数的值为负数；若变量 **X** 和变量 **Y** 没有相关性，那么斯皮尔曼相关系数则为零。
 
+### 3.2.2 Hubs 的位置
 
-
-
-
-
-
-## Hubs 的位置
-
-​	以样本数据分布的均值作为参考点，可以看到 *k-occurrences* 的值与样本的位置的关系。 在高维空间中，当潜在的数据分布是单峰时，hubs 会接近样本的均值；当潜在的数据分布为多峰时（若干个单峰分布混合而成），hubs 趋向于接近最近的单峰分布的均值。
-
-​	Hubness 现象常常与距离集中现象关联在一起。距离集中现象是指数据集中所有点到某一参考点的距离分布的标准差与均值的比值随着数据集维数不断增加而趋向于 0 的现象。
-
-
-
-> Based on existing the- oretical results discussing distance concentration (Beyer et al., 1999; Aggarwal et al., 2001), high- dimensional points are approximately lying on a hypersphere centered at the data-set mean. 
-
-​	基于现有的距离集中理论表明（Beyer et al。，1999; Aggarwal et al。，2001），高维数据分布于以样本均值为中心的的超球面上。
+​	为了进一步探究 hubness这一现象，需要对 hubs 的位置分布进行仔细分析。数据集仍然采用之前的均匀分布和正态分布随机取样数据。以样本数据分布的均值作为参考点，可以观测到样本的 *k-occurrences* 值与其在数据空间中分布的相互关系。 图 6 描述了在不同维数下（*d* = 3，*d* = 20，*d* = 100）每个数据样本 $\mathbf  x$ 的 $N_k(\mathbf x)$ 值与其距离样本均值的相关性，其中 *k* = 5。从下图中可以看出，随着数据集维数的增加， $N_k(\mathbf x)$ 与该样本到数据集均值的距离出现了强烈的相关性，这意味着越接近样本均值的点越有可能为 hubs。当 *k* 为其它值时也可获得相似的结果。该实验结果表明，在高维数据空间中，当潜在的数据分布是单峰时，hubs 会接近样本的均值；当潜在的数据分布为多峰时（如多个单峰分布混合而成），hubs 趋向于接近最近的单峰分布的均值。
 
 ![MeanNk](Images/MeanNk.png)
 
+图6   $N_k(\mathbf x)$ 与该样本点到数据集均值的距离的斯皮尔曼相关系数散列图
+
+> 增加一个过渡段
+
+## 3.3 高维数据聚类分析
+
+​	基于距离的聚类算法的主要目标是最小化同一个簇内对象之间的距离同时最大化簇间对象之间的距离。在高维数据空间中，*k-occurrences* 的偏度将会对上述两个对象造成影响。一方面，具有低 *k-occurrences* 的点很可能会增加簇内对象之间的距离，使得这些点远离数据集的其它点，可以将其视为离群点。目前，关于离群点在聚类分析方面的应用已经作了诸多的研究，通常离群点被发现之后会直接将其移除。另一方面，具有高 *k-occurrences* 的点，也就是hubs ，很有可能会接近簇的中心。值得注意的是，一些聚类算法因为 *hubs* 的存在而使聚类性能变差，这是因为某些 *hubs* 会接近来自不同簇的点[5]。之前已经提到过，相比其它点而言 hubness 分数越高的点越容易接近簇的均值，随之而来变产生一个疑问：hubs 会是质心（medoids）吗？Nenad Toma sev 等人通过实验研究发现[8]：在低维数据空间中，hubs 远离簇的质心甚至远离普通的点。然而，随着维数的增加，==簇的质心到hubs的最小距离会逐渐收敛于簇的质心到mediods的最小距离==。这表明一些medoids就是hubs。然而，簇的质心到hubs的最大距离却没有上述的相关性。同时观测到随着每一次的聚类迭代，簇的质心到hubs 的最大聚类也逐渐减小，这就表明簇的质心越来越接近hubs。因此在高维数据中，hubs可以在很大程度上代表该簇中的元素。
+
+![CentroidMedoids](Images/CentroidMedoids.png)
+
+图7 
+
+### 3.3.1 Hub聚类算法
 
 
 
-
-> 由卡方分布延伸出来皮尔森卡方检定常用于： (1)样本某性质的比例分布与总体理论分布的拟合优度；(2)同一总体的两个随机变量是否独立；(3)二或多个总体同一属性的同素性检定。[b2] 补充
-
-节点中心性这一术语通常应用在网络分析领域[d3]，在聚类分析中，点的空间中心性与*k-occurrences* 有关，随着维度的增加，越接近空间中的其它点。
-
-
-
-真实数据集与人工数据集有两处不同；（1）真是数据集通常包含相关属性；（2）真是数据集通常是由多个簇组成的。为了检验第一个属性（相关属性），采用了Franc ̧ois的方法[b4]。
-
-> 对每一个数据集，打乱它的每一维的顺序 （确认一下）这样就可以消除它们之间的相关性，数据集的本征维数将会逼近它的嵌入维数（embedding dimensionality）。
-
-在真实数据集中，hubs 相比其它点更易接近它们各自所在的簇中心。
-
-
-
-$N_k$ 的偏度与本征维数强烈相关，在本征维数越高的数据空间，hubs 会越接近簇中心。
-
-
-
-> First, let us consider the geometric upper limit to the number of points that point x can be a nearest neighbor of, in Euclidean space. In one dimension, this number is 2, in two dimensions it is 5, while in 3 dimensions it equals 11 (Tversky and Hutchinson, 1986). Generally, for Euclidean space of dimensionality d this number is equal to the kissing number, which is the maximal number of hyperspheres that can be placed to touch a given hypersphere without overlapping, with all hyperspheres being of the same size.14 Exact kissing numbers for arbitrary d are generally not known, however there exist bounds which imply that they progress exponentially with d (Odlyzko and Sloane, 1979; Zeger and Gersho, 1994). Furthermore, when considering k nearest neighbors for k > 1, the bounds become even larger. Therefore, only for very low values of d geometrical constraints of vector space prevent hubness. On the other hand, for higher values of d hubness may or may not occur, and the geometric bounds, besides providing “room” for hubness (even for values of k as low as 1) do not contribute much in fully characterizing the hubness phenomenon. Therefore, in high dimensions the behavior of data distributions needed to be studied.
-
-
-
-> if the number of dimensions is large relative to the number of points, one may expect to have a large proportion of points with N1 equaling 0, and a small proportion of points with high N1 values, that is, hubs.16 Trivially, Equation 23 also holds for Nk with k > 1, since for any point x, Nk(x) ≥ N1(x).
+​	如果 hubness 可以视为一种度量局部中心性的方法，那么可以采取多种方式将hubness应用到各种聚类分析中。在K-Means 迭代过程中，centroids 和 medoids 易趋向于接近高 hubness 分值的点，而这意味着使用hubs作为prototype可以加快算法的收敛速度。为了解释这一点我们设计了一个简单的模型，如图 7 所示，图7以2维数据空间模拟了在高维数据空间中经常出现的现象，该图阐释了以hubs作为簇中心不仅可以加快算法的收敛速度而且有助于发现更好的簇结构。	
 
 
 
 
 
-​	本章我们将会讨论在考虑降维技术的情况下，$N_k$ 的偏度与本征维数的相互关系。此研究的目的主要在于探究降维技术是否能够缓解 $N_k$ 的偏度这一问题。本文采用了主成分分析的降维技术（PCA）。在多变量的统计分析中，主成分分析（Principal components analysis，PCA）常常用于分析和简化数据集。主成分分析通过保留对方差贡献最大的样本特征，从而降低数据集的维数。Pearson 于1901 年发明了主成分分析[b5]，常常用于数据分析以及模型建立。主成分分析的主要思想是将协方差矩阵进行特征分解，从而获得数据的主要成分（特征向量）及其对应的权重（特征值）。
-
-## PCA理论基础
-
-​	本节将会在探讨协方差矩阵的特征向量是 *k* 维理想特征的理论知识：最大方差理论、最小误差理论以及坐标轴相关度理论。
-
-### 最大方差矩阵理论
-
-​	在数字信号处理中，具有较大方差的是信号，反之则是噪声，那么，信噪比就可以被描述为是信号与噪声的方差的比值。因此，理想的 *k* 维特征就是将原始的 *n* 维数据集变换为 *k* 特征后，每一个维度上均具有较大的样本方差。
-
-### 最小平方误差理论
-
-​	令 $D \subset R^d, d \in \{1,2,3,…\}$，数据集 *D* 包含 *n* 个样本点（$x_1, x_2,…,x_n$），样本在分割面上的投影记为 $x_k'$，那么最小平方误差的公式如下：
-
-​						$$\sum_{k=1}^d||(x_k'-x_k)||^2$$
-
-PCA算法步骤：
-
-（1） 使用 *n* 行 *d* 列的矩阵 *X* 表示原始数据；
-
-（2）将矩阵 *X* 的每一列进行零均值化，即减去这一行的均值；
-
-（3）求解协方差矩阵，$C=\frac{1}{n}X^TX$；
-
-（4）求解协方差矩阵的特征值及其特征向量；
-
-（5）令特征向量按照其对应的特征值降序排序，取前 *k* 列组成新的矩阵 *P*；
-
-（6）Y = PX 即为降维后新的数据。
-
-
-
-## 聚类
-
-​	基于距离的聚类算法的主要目标是最小化同一个簇内对象之间的距离同时最大化簇间对象之间的距离。在高维数据空间中，*k-occurrences* 的偏度将会对上述两个对象造成影响。一方面，具有低 *k-occurrences* 的点很可能会增加簇内对象之间的距离，这些点远离数据集的其它点，可以将其视为离群点。目前，关于离群点在聚类分析方面的应用已经作了诸多的研究，通常离群点被发现之后会直接将其移除。另一方面，具有高 *k-occurrences* 的点，也就是hubs ，很有可能会接近簇的中心。另外， *hubness* 的度依赖于数据的本征维数而非嵌入维数（embedding dimensionality），本征维数是指表示数据集所有点对之间的距离所需特征的最小数量。通常，*hubness* 与本征维数相关而与距离或相似度的度量方式无关。通常，低 high-hubness 分数表明该点远离数据样本中的其它点，并且很有可能是一个离群点。然而，在高维数据空间中，由于数据本身的分布情况使得 high-hubness 分数的点变得很普遍。这些点将会导致簇内样本之间距离的增加。同样值得注意的是，一些聚类算法因为 *hubs* 的存在而使聚类性能变差。这是因为某些 *hubs* 会接近来自不同簇的点[5]。之前已经提到过，相比其它点而言hubness 分数越高的点越容易接近簇的均值，随之而来变产生一个疑问：hubs 会是质心（medoids）吗？Nenad Toma sev 等人通过实验研究发现[8]：在低维数据空间中，hubs 远离簇的质心甚至远离普通的点。然而，随着维数的增加，==簇的质心到hubs的最小距离会逐渐收敛于簇的质心到mediods的最小距离==。这表明一些medoids就是hubs。然而，簇的质心到hubs的最大距离却没有上述的相关性。同时观测到随着每一次的聚类迭代，簇的质心到hubs 的最大聚类也逐渐减小，这就表明簇的质心越来越接近hubs。因此在高维数据中，hubs可以在很大程度上代表该簇中的元素。
-
-
-
-# 高维数据聚类分析
-
-​	在诸多现实生活应用中，例如文本聚类和主题检测
-
-## hub聚类算法
-
-在k-means 迭代过程中，centroids 和 medoids 易趋向于接近 高 hubness 分值的点，而这意味着使用hubs作为prototype可以加快算法的收敛速度。Centroids依赖当前簇中的所有元素，而hubs依赖它们的近邻元素因此携带着很多局部的centrality的信息。Hubness主要可分为全局hubness和局部hubness。局部hubness是全局hubness在给定任一簇情况下的约束。因此，局部hubness的分数是指在同一个簇中的某个点的  *k-occurrences*  的数量。Hub聚类算法的计算复杂度主要是由计算hubness分数的代价决定的。![CentroidMedoids](Images/CentroidMedoids.png)
+Centroids依赖当前簇中的所有元素，而hubs依赖它们的近邻元素因此携带着很多局部的centrality的信息。Hubness主要可分为全局hubness和局部hubness。局部hubness是全局hubness在给定任一簇情况下的约束。因此，局部hubness的分数是指在同一个簇中的某个点的  *k-occurrences*  的数量。Hub聚类算法的计算复杂度主要是由计算hubness分数的代价决定的。
 
 
 
 ​		
 
-### 1 Deterministic方法
+#### 1 Deterministic方法
 
 ​	使用hubs进行聚类分析的一种简单方法是将它们作为簇的质心。该算法一般称为K-hubs算法，其算法思想如下：				
 
@@ -562,7 +516,7 @@ Cluster[] clusters = formClusters();
 
 尽管K-hubs聚类算法可以得到很好的聚类效果，但是它对初始中心点十分敏感。为了增加找到全局最优解的概率，将随机变量引入到了*K-hubs*中。
 
-### 2 Probabilistic方法
+#### 2 Probabilistic方法
 
 尽管拥有最高hubness分值的点可以最大可能地代表簇中心，然而也不应该簇中其它点的相关信息。基于广泛使用的模拟退火方法实现了一个平方hubness-proportional的随机方法[d22]。将温度因子引入到 *K-hubs* 算法中，那么它的初始值就是完全随机的，该方法称为 *hubness-*
 *proportional clustering* （HPC）聚类算法，其算法思想如下：
@@ -625,9 +579,7 @@ float t = $t_0$; initialize temperature
 ​		
 ​	
 
-### 3 Hybird方法
-
-
+#### 3 Hybird方法
 
 ​	K-hubs聚类算法和HPC聚类算法都没有关注数据或对象的表现形式（representation），它们只关注距离矩阵。然而，如果数据的表现形式是已知的，那么便可以利用centroids的相关性质进行聚类。使用点的hubness分数指导聚类搜索，最终会形成一个基于centroid的聚类结构。该算法称为*hubness-proportional K-means* （HPKM）聚类算法，它与 HPC聚类算法的唯一不同之处在于确定阶段使用的是k-means更新数值而非K-hubs。
 
@@ -683,7 +635,7 @@ float t = $t_0$; initialize temperature
 
 
 
-### 4 Kernel GHPKM	
+#### 4 Kernel GHPKM	
 
 ​	K-hubs、GHPC 和 GHPKM 的主要缺陷是它们只能发现发现超球面的簇。然而这在许多领域是不够的，因此可以使用kernel方法来解决此问题。Kernel K-means 是K-means算法的一个扩展，K-hubs、GHPC和GHPKM同样是K-means的扩展，因此可以将这些算法与kernel方法结合进行聚类分析。
 
@@ -798,49 +750,45 @@ float t = $t_0$; initialize temperature
 
 clusters = formClusters();
 
-**return** clusters
+**return** clusters​​​​​
+
+## 3.4  PCA
+
+ ​本节将会在探讨协方差矩阵的特征向量是 *k* 维理想特征的理论知识：最大方差理论、最小误差理论以及坐标轴相关度理论。
+
+（1）最大方差矩阵理论
+
+​	在数字信号处理中，具有较大方差的是信号，反之则是噪声，那么，信噪比就可以被描述为是信号与噪声的方差的比值。因此，理想的 *k* 维特征就是将原始的 *n* 维数据集变换为 *k* 特征后，每一个维度上均具有较大的样本方差。
+
+（2）最小平方误差理论
+
+​	令 $D \subset R^d, d \in \{1,2,3,…\}$，数据集 *D* 包含 *n* 个样本点（$x_1, x_2,…,x_n$），样本在分割面上的投影记为 $x_k'$，那么最小平方误差的公式如下：
+
+​						$$\sum_{k=1}^d||(x_k'-x_k)||^2$$
+
+PCA算法步骤：
+
+（1） 使用 *n* 行 *d* 列的矩阵 *X* 表示原始数据；
+
+（2）将矩阵 *X* 的每一列进行零均值化，即减去这一行的均值；
+
+（3）求解协方差矩阵，$C=\frac{1}{n}X^TX$；
+
+（4）求解协方差矩阵的特征值及其特征向量；
+
+（5）令特征向量按照其对应的特征值降序排序，取前 *k* 列组成新的矩阵 *P*；
+
+（6）Y = PX 即为降维后新的数据。聚类
 
 
 
+基于距离的聚类算法的主要目标是最小化同一个簇内对象之间的距离同时最大化簇间对象之间的距离。在高维数据空间中，*k-occurrences* 的偏度将会对上述两个对象造成影响。一方面，具有低 *k-occurrences* 的点很可能会增加簇内对象之间的距离，这些点远离数据集的其它点，可以将其视为离群点。目前，关于离群点在聚类分析方面的应用已经作了诸多的研究，通常离群点被发现之后会直接将其移除。另一方面，具有高 *k-occurrences* 的点，也就是hubs ，很有可能会接近簇的中心。另外， *hubness* 的度依赖于数据的本征维数而非嵌入维数（embedding dimensionality），本征维数是指表示数据集所有点对之间的距离所需特征的最小数量。通常，*hubness* 与本征维数相关而与距离或相似度的度量方式无关。通常，低 high-hubness 分数表明该点远离数据样本中的其它点，并且很有可能是一个离群点。然而，在高维数据空间中，由于数据本身的分布情况使得 high-hubness 分数的点变得很普遍。这些点将会导致簇内样本之间距离的增加。同样值得注意的是，一些聚类算法因为 *hubs* 的存在而使聚类性能变差。这是因为某些 *hubs* 会接近来自不同簇的点[5]。之前已经提到过，相比其它点而言hubness 分数越高的点越容易接近簇的均值，随之而来变产生一个疑问：hubs 会是质心（medoids）吗？Nenad Toma sev 等人通过实验研究发现[8]：在低维数据空间中，hubs 远离簇的质心甚至远离普通的点。然而，随着维数的增加，==簇的质心到hubs的最小距离会逐渐收敛于簇的质心到mediods的最小距离==。这表明一些medoids就是hubs。然而，簇的质心到hubs的最大距离却没有上述的相关性。同时观测到随着每一次的聚类迭代，簇的质心到hubs 的最大聚类也逐渐减小，这就表明簇的质心越来越接近hubs。因此在高维数据中，hubs可以在很大程度上代表该簇中的元素。
+
+​	本章我们将会讨论在考虑降维技术的情况下，$N_k$ 的偏度与本征维数的相互关系。此研究的目的主要在于探究降维技术是否能够缓解 $N_k$ 的偏度这一问题。本文采用了主成分分析的降维技术（PCA）。在多变量的统计分析中，主成分分析（Principal components analysis，PCA）常常用于分析和简化数据集。主成分分析通过保留对方差贡献最大的样本特征，从而降低数据集的维数。Pearson 于1901 年发明了主成分分析[b5]，常常用于数据分析以及模型建立。主成分分析的主要思想是将协方差矩阵进行特征分解，从而获得数据的主要成分（特征向量）及其对应的权重（特征值）。
 
 
 
-​		
-​		
-​	​		
-​	
-
-
-
-
-
-​	
-
-
-
-
-
-
-
-
-
-
-
-[b1] Groeneveld, RA; Meeden, G. Measuring Skewness and Kurtosis. The Statistician. 1984, 33 (4): 391–399. 
-
-[b2] Pearson, Karl. On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling (PDF). Philosophical Magazine Series 5. 1900, 50 (302): 157–175. 
-
-[b3] John P. Scott. Social Network Analysis: A Handbook. Sage Publications, 2nd edition, 2000.
-
-[b4] Damien Franc ̧ois. High-dimensional Data Analysis: Optimal Metrics and Feature Selection. PhD thesis, Universite ́ catholique de Louvain, Louvain, Belgium, 2007.
-
-[b5] Pearson, K. On Lines and Planes of Closest Fit to Systems of Points in Space (PDF). Philosophical Magazine. 1901, 2 (6): 559–572.
-
-
-
-
-
-
+## 3.5 Hub聚类算法的改进
 
 # 4 基于 PCA-Hubness 的聚类方法
 
@@ -930,22 +878,18 @@ clusters = formClusters();
 
 [8] Nenad Toma sev，Milo s Radovanovi c，DunjaMladeni c，andMirjana Ivanovi c. The Role of Hubness in Clustering High-Dimensional Data[J]，IEEETRANSACTIONS ON KNOWLEDGE AND DATA ENGINEERING, VOL. 26, NO. 3，2014  
 
+[b1] Groeneveld, RA; Meeden, G. Measuring Skewness and Kurtosis. The Statistician. 1984, 33 (4): 391–399. 
+
+[b2] Pearson, Karl. On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling (PDF). Philosophical Magazine Series 5. 1900, 50 (302): 157–175. 
+
+[b3] John P. Scott. Social Network Analysis: A Handbook. Sage Publications, 2nd edition, 2000.
+
+[b4] Damien Franc ̧ois. High-dimensional Data Analysis: Optimal Metrics and Feature Selection. PhD thesis, Universite ́ catholique de Louvain, Louvain, Belgium, 2007.
+
+[b5] Pearson, K. On Lines and Planes of Closest Fit to Systems of Points in Space (PDF). Philosophical Magazine. 1901, 2 (6): 559–572.
+
  
 
 #  附录
 
 ## 作者在攻读学位期间发表的论文目录：
-
-
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
