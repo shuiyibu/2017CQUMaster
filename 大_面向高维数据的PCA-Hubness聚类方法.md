@@ -404,7 +404,7 @@ $$\lim_{d \to \infty}\frac{dist_{max}-dist_{min}}{dist_{min}} \rightarrow 0$$
 
 ​						$$p_{i,k}(\mathbf x)=\begin{cases} 1, & \text{if $\mathbf x$ is among k nearest neighbours of $\mathbf {x}_i$, according to $dist$} \\0  & \text{otherwise} \end{cases}$$
 
-​	在此基础之上，定义 $N_k(\mathbf x)=\sum_{i=1}^np_{i,k}(\mathbf x)$，$N_k(\mathbf x)$ 表示为在 $R^d$ 空间中，$\mathbf x$ 出现在其它 k-nearest neighbor 列表中的次数，也记为 K-occurrence，仅根据数据点的 K-occurrence 的大小无法确定 hubness 对实验结果有何种影响。 数据点的 bad k-occurrences 表示为 $B_{N_K (\mathbf x)}$，是指数据点 $\mathbf x$ 作为数据集 *D* 中其它的点的 *k* nearest neighbor 次数，并且  $\mathbf x$  点的标签和那些点的标签不匹配。数据点的 good k-occurrences 表示为 $G_{N_K(\mathbf x)}$， 是指点  $\mathbf x$  的标签与那些点的标签相匹配[5]。为了表征 $N_k$ 的非对称性，我们使用 *k-occurrences* 分布的标准第三矩（也称作偏度）[b1]，
+​	在此基础之上，定义 $N_k(\mathbf x)=\sum_{i=1}^np_{i,k}(\mathbf x)$，$N_k(\mathbf x)$ 表示为在 $R^d$ 空间中，$\mathbf x$ 出现在其它 k-nearest neighbor 列表中的次数，也记为 *K-occurrence* 或 *hubness score*，仅根据数据点的 *K-occurrence* 的大小无法确定 hubness 对实验结果有何种影响。 数据点的 *bad k-occurrence*s 表示为 $B_{N_K (\mathbf x)}$，是指数据点 $\mathbf x$ 作为数据集 *D* 中其它的点的 *k* nearest neighbor 次数，并且  $\mathbf x$  点的标签和那些点的标签不匹配。数据点的 *good k-occurrences* 表示为 $G_{N_K(\mathbf x)}$， 是指点  $\mathbf x$  的标签与那些点的标签相匹配[5]。为了表征 $N_k$ 的非对称性，我们使用 *k-occurrences* 分布的标准第三矩（也称作偏度）[b1]，
 
 ​									$$S_{N_k}=\frac{E(N_k-\mu_{N_k})^3}{\sigma_{N_k}^3}$$
 
@@ -474,15 +474,23 @@ $$\rho = \frac{\sum_i(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_i(x_i-\bar{x})^2
 
 ### 3.3.1 Hub聚类算法
 
+​	无论是在 efficiency 还是 effectiveness 上，高维数据都对传统聚类算法造成了实质上的困难。因此，必须使用一种新的技术来对高维数据进行聚类分析。通常的想法是将原始的高维数据映射为一个低维的流型结构[d29]。因此，子空间方法常用于高维数据的聚类分析。接下来的章节将会采用一种不同的方法，通过利用最近提出的在高维本征维数数据的 *k* 近邻图中出现的hubness现象进行聚类分析。
+
+​	在许多实际应用中，例如文本聚类和主题检测[d30]\[d31]，为了进行有意义地聚类分析通常会将原始数据投影到某些较低维的子空间和==流型结构==（manifolds）中。一般来说有两种类型的子空间聚类方法，一种方法是试图找到一个真实的特征子空间，另一种方法是在模拟过程中自动对特征进行加权处理以增加聚类效果。在较低维的划分子空间中执行标准聚类算法看似是可行的[d32]。然而，如果划分出的较低维子空间并不是真正意义上的低维数据，那么标准的聚类算法是无法处理的。此外，许多子空间聚类算法是基于密度的聚类或者是K-Means算法的扩展，而基于密度的聚类算法和K-Means聚类算法均不适用于高维数据聚类分析。因此，子空间聚类方法在高维数据空间中也存在诸多限制。~~除了子空间聚类外==，基于共享邻居相似度==（shared neighbors similarity）的方法也常用于高维数据聚类分析。==基于共享邻居相似度==的方法可以减少维数灾难对聚类分析的负面影响[d33]。~~
 
 
-​	如果 hubness 可以视为一种度量局部中心性的方法，那么可以采取多种方式将hubness应用到各种聚类分析中。在K-Means 迭代过程中，centroids 和 medoids 易趋向于接近高 hubness 分值的点，而这意味着使用hubs作为prototype可以加快算法的收敛速度。为了解释这一点我们设计了一个简单的模型，如图 7 所示，图7以2维数据空间模拟了在高维数据空间中经常出现的现象，该图阐释了以hubs作为簇中心不仅可以加快算法的收敛速度而且有助于发现更好的簇结构。	
 
 
 
 
 
-Centroids依赖当前簇中的所有元素，而hubs依赖它们的近邻元素因此携带着很多局部的centrality的信息。Hubness主要可分为全局hubness和局部hubness。局部hubness是全局hubness在给定任一簇情况下的约束。因此，局部hubness的分数是指在同一个簇中的某个点的  *k-occurrences*  的数量。Hub聚类算法的计算复杂度主要是由计算hubness分数的代价决定的。
+​	Hubness 可以视为一种度量局部中心性的方法，那么可以采取多种方式将hubness应用到各种聚类分析中。在K-Means 迭代过程中，centroids依赖当前簇中的所有元素，而hubs依赖它们的近邻元素，因此hubs携带着很多局部的centrality的信息。Hubness主要可分为全局hubness和局部hubness。局部hubness是全局hubness在给定任一簇情况下的约束。因此，局部hubness的分数是指在同一个簇中的某个点的  *k-occurrences*  的数量。centroids 和 medoids 易趋向于接近高 hubness 分值的点，而这意味着使用hubs作为prototype可以加快算法的收敛速度。为了解释这一点我们设计了一个简单的模型，如图 7 所示，图7中以2维数据空间模拟了在高维数据空间中经常出现的现象，该图阐释了以hubs作为簇中心不仅可以加快算法的收敛速度而且有助于发现更好的簇结构。Tomasev等人提出了集中基于hubness的K-Means扩展聚类算法[8]。在 global K-hubs（GKH）算法中，hubs取代簇中心作为==簇原型==（prototypes）。初步实验表明GKH方法容易过早地收敛到次优的簇结构。因此，在GKH算法中引入了随机因子，在每次迭代过程中hubs和其它样本点以某种概率称为簇原型，该概率依赖样本点本身的$N_k(\mathbf x)^2$值。这种算法被称为global hubness-proportional clustering（GHPC）。
+
+
+
+
+
+Hub聚类算法的计算复杂度主要是由计算hubness分数的代价决定的。
 
 
 
@@ -854,9 +862,21 @@ PCA算法步骤：
 
 [d25] Not to be confused with the unrelated, but similarly named, Hughes effect in electromagnetism (named after Declan C. Hughes) which refers to an asymmetry in the hysteresis curves of laminated cores made of certain magnetic materials, such as permalloy or mu-metal, in alternating magnetic fields.
 
+[d26] Charu C. Aggarwal, Alexander Hinneburg, and Daniel A. Keim. On the surprising behavior of distance metrics in high dimensional spaces. In Proceedings of the 8th International Conference on Database Theory (ICDT), volume 1973 of Lecture Notes in Computer Science, pages 420– 434. Springer, 2001.
 
+[d27] Maritz. J.S. (1981) Distribution-Free Statistical Methods, Chapman & Hall. ISBN 0-412-15940-6. (page 217)
 
+[d28] Myers, Jerome L.; Well, Arnold D., Research Design and Statistical Analysis 2nd, Lawrence Erlbaum: 508, 2003, ISBN 0-8058-4037-0
 
+[d29] Kriegel HP, Kr¨oger P, Zimek A (2009) Clustering high-dimensional data: A survey on subspaceclustering, pattern-based clustering, and correlation clustering. ACM Transactions on KnowledgeDiscovery from Data 3(1):1:1–1:58
+
+[d30] Jing L, Ng M, Xu J, Huang J (2005) Subspace clustering of text documents with feature weightingk-means algorithm. In: Ho T, Cheung D, Liu H (eds) Advances in Knowledge Discovery andData Mining, Lecture Notes in Computer Science, vol 3518, Springer Berlin Heidelberg, pp802–812
+
+[d31] Li T, Ma S, Ogihara M (2004) Document clustering via adaptive subspace iteration. In: Proceedingsof the 27th Annual International ACM SIGIR Conference on Research and Developmentin Information Retrieval, ACM, New York, NY, USA, SIGIR ’04, pp 218–225, DOI
+
+[d32] Jing L, Ng M, Huang J (2007) An entropy weighting k-means algorithm for subspace clusteringof high-dimensional sparse data. Knowledge and Data Engineering, IEEE Transactions on19(8):1026–1041
+
+[d33] Mo¨ellic PA, Haugeard JE, Pitel G (2008) Image clustering based on a shared nearest neighbors approachfor tagged collections. In: Proceedings of the 2008 international conference on Contentbasedimage and video retrieval, ACM, New York, NY, USA, CIVR ’08, pp 269–278
 
 
 
