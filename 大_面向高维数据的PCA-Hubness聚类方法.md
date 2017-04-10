@@ -1063,8 +1063,7 @@ PCA算法步骤：
 
 [d34] Chen J, ren Fang H, Saad Y (2009) Fast approximate kNN graph construction for high dimensional data via recursive Lanczos bisection. Journal of Machine Learning Research 10:1989–2012
 
-[d35] Satuluri V, Parthasarathy S (2012) Bayesian locality sensitive hashing for fast similarity search.
-Proc VLDB Endow 5(5):430–441
+[d35] Satuluri V, Parthasarathy S (2012) Bayesian locality sensitive hashing for fast similarity search.Proc VLDB Endow 5(5):430–441
 
 [d36] He J, Kumar S, Chang SF (2012) On the difficulty of nearest neighbor search. In: International Conference on Machine Learning (ICML), icml.cc / Omnipress
 
@@ -1088,7 +1087,7 @@ Proc VLDB Endow 5(5):430–441
 
 [6] Abdi. H，Williams L.J. Principal componentanalysis[J]. Wiley Interdisciplinary Reviews: Computational Statistics. 2 (4):433–459. 2010
 
-[7] Peter J. Rousseeuw. Silhouettes: a Graphical Aid tothe Interpretation and Validation of Cluster Analysis[J]. Computational andApplied Mathematics. **20**: 53–65.1987.
+[7] Peter J. Rousseeuw. Silhouettes: a Graphical Aid to the Interpretation and Validation of Cluster Analysis[J]. Computational and Applied Mathematics. **20**: 53–65.1987.
 
 [8] Nenad Toma sev，Milo s Radovanovi c，DunjaMladeni c，andMirjana Ivanovi c. The Role of Hubness in Clustering High-Dimensional Data[J]，IEEETRANSACTIONS ON KNOWLEDGE AND DATA ENGINEERING, VOL. 26, NO. 3，2014  
 
